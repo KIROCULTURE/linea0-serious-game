@@ -1,0 +1,17 @@
+LÍNEA 0 — CÓMO ABRIR
+
+1. Descomprime TODO el zip (clic derecho > Extraer todo). No lo abras desde dentro del zip.
+2. Entra a la carpeta Juego y abre Linea0.exe. No necesita instalación, internet ni administrador.
+3. Si aparece "Windows protegió su PC": clic en "Más información" y después en "Ejecutar de todas formas".
+4. Alt+Enter alterna entre pantalla completa y ventana.
+
+EN EL MENÚ
+- Modo demo: 4 cuadrillas con puntos de ejemplo, la Zona 2 completa y el reporte final (~5 min).
+- Opciones > "Sin cuadrillas: Sí": para jugar una sola persona (sin marcador, turnos ni predicciones).
+- Jugar: la clase completa (cuadrillas, control de entrada, Zonas 0 a 6, control de salida y reporte).
+- Elegir zona: jugar una sola zona, con o sin refuerzo.
+
+DURANTE EL JUEGO
+- Solo mouse. Espacio salta la cuenta regresiva de la Apuesta del andén.
+- "Saltar" (arriba a la derecha) salta un puzzle, con confirmación.
+- "Pista" da 3 niveles de ayuda.
