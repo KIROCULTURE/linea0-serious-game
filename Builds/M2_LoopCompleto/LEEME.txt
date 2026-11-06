@@ -1,0 +1,8 @@
+Línea 0 — build M2_LoopCompleto (prototipo jugable de punta a punta)
+Qué incluye: menú, cuadrillas, control de entrada, Zonas 0 a 6 con sus puzzles esenciales y Sin vía, control de salida, final con plano, ganadora y reporte.
+Cómo se juega: el maquinista usa solo el mouse; la cuadrilla de turno decide y las otras predicen durante la Apuesta del andén (Espacio la salta).
+Opciones: Apuesta on/off, Sin cuadrillas (una persona), modo proyector. Alt+Enter: ventana o pantalla completa. "Saltar" (arriba a la derecha) salta un puzzle.
+Modo demo: 4 cuadrillas con puntos de ejemplo, Zona 2 completa y reporte final (~5 min).
+Qué falta: 5.2 Rueda y 5.3 Clasificar (Zona 5 solo trae 5.1), sonido.
+Duración: ~30 min con todo el curso; Elegir zona permite jugar una sola zona.
+No necesita internet ni instalación: abrir Linea0.exe.

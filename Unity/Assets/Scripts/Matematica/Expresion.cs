@@ -12,6 +12,7 @@ namespace Linea0.Matematica
         public Racional Valor;
         public char Op;              // '+', '-', '×', '·', ':'
         public bool ConParentesis;   // "(−2)" escrito así en la expresión original
+        public int Id = -1;          // para seguir un operador mientras la expresión se reduce
 
         public bool EsSuma => Tipo == TipoToken.Op && (Op == '+' || Op == '-');
         public bool EsProducto => Tipo == TipoToken.Op && (Op == '×' || Op == '·' || Op == ':');
@@ -59,6 +60,7 @@ namespace Linea0.Matematica
                 }
                 i++;
             }
+            for (int k = 0; k < t.Count; k++) t[k].Id = k;
             ColapsarParentesis(t, true);
             return t;
         }

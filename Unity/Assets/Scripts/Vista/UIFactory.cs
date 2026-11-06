@@ -91,6 +91,47 @@ namespace Linea0.Vista
             }
         }
 
+        static Sprite triangulo;
+        public static Sprite Triangulo
+        {
+            get
+            {
+                if (triangulo == null)
+                {
+                    int n = 128;
+                    var t = new Texture2D(n, n, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp };
+                    for (int y = 0; y < n; y++)
+                        for (int x = 0; x < n; x++)
+                        {
+                            float fy = (y + 0.5f) / n;              // 0 abajo, 1 arriba
+                            float media = (1 - fy) * 0.5f;          // media base a esa altura
+                            float dx = Mathf.Abs((x + 0.5f) / n - 0.5f);
+                            float a = Mathf.Clamp01((media - dx) * n * 0.9f) * Mathf.Clamp01(fy * n);
+                            t.SetPixel(x, y, new Color(1, 1, 1, a));
+                        }
+                    t.Apply();
+                    triangulo = Sprite.Create(t, new Rect(0, 0, n, n), new Vector2(0.5f, 0.5f), n);
+                }
+                return triangulo;
+            }
+        }
+
+        /// <summary>Forma de cuadrilla o alternativa: 0 ▲, 1 ●, 2 ■, 3 ◆. Dibujada con primitivas.</summary>
+        public static Image Forma(Transform padre, int i, Color c, float tam)
+        {
+            Image img;
+            switch (i)
+            {
+                case 0: img = Caja(padre, "Triangulo", c, Triangulo); break;
+                case 1: img = Caja(padre, "Circulo", c, Circulo); break;
+                case 2: img = Caja(padre, "Cuadrado", c); tam *= 0.82f; break;
+                default: img = Caja(padre, "Rombo", c); tam *= 0.72f; img.rectTransform.localRotation = Quaternion.Euler(0, 0, 45); break;
+            }
+            img.raycastTarget = false;
+            img.rectTransform.sizeDelta = new Vector2(tam, tam);
+            return img;
+        }
+
         // ---------- estructura ----------
 
         public static Canvas Lienzo(string nombre, int orden)
@@ -132,7 +173,7 @@ namespace Linea0.Vista
         public static RectTransform Ubicar(RectTransform rt, Vector2 ancla, Vector2 pos, Vector2 tam, Vector2? pivote = null)
         {
             rt.anchorMin = rt.anchorMax = ancla;
-            rt.pivot = pivote ?? ancla;
+            rt.pivot = pivote ?? (ancla == Vector2.zero ? new Vector2(0.5f, 0.5f) : ancla); // ancla cero = coordenadas de vía, centrado
             rt.anchoredPosition = pos;
             rt.sizeDelta = tam;
             return rt;
