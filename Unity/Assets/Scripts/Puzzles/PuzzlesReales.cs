@@ -131,6 +131,23 @@ namespace Linea0.Puzzles
                 UI.Llenar(dentro.rectTransform, 5, 5, 5, 5);
                 c.fondo = dentro; // el color de selección va en el interior
                 UI.Ubicar(c.rt, new Vector2(0.5f, 0.5f), new Vector2(x + i * 230, -6), new Vector2(200, 130));
+                // también se puede arrastrar: al soltarla sobre una línea, cuenta como elegir esa región
+                var inicioPos = c.rt.anchoredPosition;
+                var arr = c.rt.gameObject.AddComponent<Arrastre>();
+                arr.alArrastrar = ev =>
+                {
+                    if (!c.button.interactable) return;
+                    elegida = k;
+                    RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)c.rt.parent, ev.position, ev.pressEventCamera, out var lp);
+                    c.rt.anchoredPosition = lp - ((RectTransform)c.rt.parent).rect.center;
+                };
+                arr.alSoltar = ev =>
+                {
+                    if (!c.button.interactable) return;
+                    c.rt.anchoredPosition = inicioPos;
+                    for (int r = 3; r >= 0; r--)
+                        if (RectTransformUtility.RectangleContainsScreenPoint(regiones[r].rectTransform, ev.position, ev.pressEventCamera)) { elegida = k; region = r; break; }
+                };
                 tarjetas.Add(c);
             }
             G.Captura(P.id + "_plano");
@@ -148,7 +165,20 @@ namespace Linea0.Puzzles
                     foreach (var t in tarjetas) if (t.button.interactable) t.fondo.color = Color.white;
                     tarjetas[elegida].fondo.color = Paleta.Sol;
                     region = -1;
-                    if (G.auto) region = (System.Array.IndexOf(Codigos, P.regiones[elegida]) + (G.fallar && intentos == 0 ? 1 : 0)) % 4;
+                    if (G.auto)
+                    {
+                        int destino = (System.Array.IndexOf(Codigos, P.regiones[elegida]) + (G.fallar && intentos == 0 ? 1 : 0)) % 4;
+                        if (G.fallar)
+                        {
+                            // prueba automática del arrastre: suelta la tarjeta sobre la franja de esa región
+                            var rDest = regiones[destino].rectTransform;
+                            var punto = destino == 3 ? Vector2.zero : new Vector2(-rDest.rect.width / 2 + 60, 0);
+                            var pant = RectTransformUtility.WorldToScreenPoint(null, rDest.TransformPoint(punto));
+                            tarjetas[elegida].rt.GetComponent<Arrastre>().alSoltar(new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current) { position = pant });
+                            if (region != destino) Debug.LogError("Arrastre de tarjeta: región " + region + " en vez de " + destino);
+                        }
+                        region = destino;
+                    }
                     while (region < 0)
                     {
                         // se puede cambiar de tarjeta antes de elegir región
