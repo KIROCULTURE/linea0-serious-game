@@ -69,7 +69,7 @@ namespace Linea0.Vista
         /// <summary>Encuadra el rango del puzzle con un margen para que no se corten las píldoras.</summary>
         public static void RangoConMargen(double a, double b, out double nmin, out double nmax)
         {
-            double pad = Math.Max(0.45, (b - a) * 0.05);
+            double pad = Math.Max(0.45, (b - a) * 0.09); // deja medio tren de margen
             nmin = a - pad; nmax = b + pad;
         }
 

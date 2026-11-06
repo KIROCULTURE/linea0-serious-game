@@ -157,7 +157,15 @@ namespace Linea0.Puzzles
             T.Puertas(true);
             V.destinoIluminado = true;
             V.Redibujar();
-            yield return Ease.Pausa(0.4f);
+            // baja el pasajero y camina al andén
+            if (T.gameObject.activeSelf)
+            {
+                var per = Pantalla.Persona(V.capaEncima, ColorPasajero, 0.7f);
+                float x0 = V.X(T.x) + 60;
+                UI.Ubicar(per, Vector2.zero, new Vector2(x0, Via.YVia + 30), per.sizeDelta, new Vector2(0.5f, 0));
+                yield return Ease.Durante(0.7f, t => per.anchoredPosition = new Vector2(x0 + 90 * Ease.Salida(t), Via.YVia + 30 + 40 * Mathf.Sin(t * Mathf.PI)));
+            }
+            yield return Ease.Pausa(0.3f);
         }
 
         /// <summary>Color de un número según su conjunto.</summary>

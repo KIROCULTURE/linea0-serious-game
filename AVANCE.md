@@ -4,6 +4,7 @@
 | Hito | Qué se ve al jugarla | Duración | ¿Sirve para presentar? |
 |---|---|---|---|
 | M0_Base | Menú con título y "Próximamente" (solo prueba que compila y arranca) | — | No |
+| M4_Presentable | Igual que M2 más pulido: el pasajero baja al llegar, margen para el tren, UI revisada en 1366×768 y 16:10 | ~30 min completo · ~5 min el Modo demo | **Sí (la recomendada)** |
 | M2_LoopCompleto | Juego de punta a punta: menú → cuadrillas → control de entrada → Zonas 0 a 6 (esenciales y Sin vía; refuerzos según la regla 6.14) → control de salida → final con plano, ganadora y reporte. Modo demo, Elegir zona y Opciones | ~30 min completo · ~5 min el Modo demo | **Sí** |
 
 La build M1 no salió por separado: el núcleo (vía, tren, boletos, cuadrillas, marcador, "¿Quién predijo bien?") quedó dentro de M2, porque se pidió priorizar M2.
