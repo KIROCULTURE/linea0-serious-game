@@ -1,0 +1,6 @@
+{
+    "name": "Linea0",
+    "rootNamespace": "Linea0",
+    "references": ["UnityEngine.UI"],
+    "autoReferenced": true
+}
