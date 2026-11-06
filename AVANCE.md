@@ -1,5 +1,22 @@
 # AVANCE — Línea 0
 
+## Último release bueno: build-0801
+
+`Escritorio\Linea0_Presentacion_0801.zip`, también en GitHub como release [build-0801](https://github.com/KIROCULTURE/linea0-serious-game/releases/tag/build-0801). Trae `Juego/` (la build completa), `COMO_ABRIR.txt`, `PARA_PRESENTAR.md`, el GDD y el mockup. Se descomprime y se abre `Juego/Linea0.exe`.
+
+Lo que trae:
+- El loop completo con todos los puzzles del GDD, esenciales y de refuerzo, y el ritmo adaptativo.
+- Modo demo, Sin cuadrillas y "Cómo jugar" (4 pantallas).
+- 5.1: la diagonal del compás se arrastra.
+- 5.3: las tarjetas se arrastran al plano.
+
+Pasa los 52 tests y las pruebas automáticas (respuestas correctas, fallas, Saltar y Modo demo) sin excepciones, a 1366×768 y 1920×1080. No tiene sonido.
+
+Releases anteriores, por si algo falla:
+- build-0751: sin el arrastre de tarjetas.
+- build-0730: sin los arrastres.
+- build-0720: la versión segura, sin "Cómo jugar".
+
 ## 1. Builds
 | Hito | Qué se ve al jugarla | Duración | ¿Sirve para presentar? |
 |---|---|---|---|
@@ -22,9 +39,10 @@ Cada build está en `Builds/<hito>/` y comprimida en `Builds/<hito>.zip`. Las pr
 
 ## 3. Pendiente
 - Sonido (ver Bloqueos).
-- 5.1 Compás: la diagonal se gira con un botón ("Girar compás") y no arrastrándola. El divisor y la lupa de los pasos 2 y 3 se muestran como texto (7/5, 17/12; 1,4 → 1,41 → 1,414…), sin usar las herramientas.
+- 5.1 Compás: la diagonal ya se arrastra (el botón "Girar compás" queda de respaldo). El divisor y la lupa de los pasos 2 y 3 se muestran como texto (7/5, 17/12; 1,4 → 1,41 → 1,414…), sin usar las herramientas.
 - 5.2 Rueda: la lupa sobre π también se muestra como texto.
-- 5.3 Clasificar: se toca la tarjeta y después la línea (no se arrastra). Da +2 o +1 por tarjeta a la cuadrilla de turno y no tiene Apuesta.
+- 5.3 Clasificar: las tarjetas se arrastran a su línea (tocar tarjeta y luego línea también funciona). Da +2 o +1 por tarjeta a la cuadrilla de turno y no tiene Apuesta.
+- Los arrastres se probaron con eventos simulados en la prueba automática, no con un mouse real.
 - Algunas frases de "Nombra" del GDD pasan de 90 caracteres. El texto se achica solo para caber en el cartel, pero a veces ocupa dos líneas.
 - No se probó a mano con mouse. Todo se verificó con pruebas automáticas sobre la build, todas sin excepciones:
   - `-auto`: juega todo con las respuestas correctas.
@@ -54,18 +72,18 @@ Cada build está en `Builds/<hito>/` y comprimida en `Builds/<hito>.zip`. Las pr
 - Modo demo: entra directo a la Zona 2 con refuerzo, con 4 cuadrillas y datos de ejemplo en puntos y controles.
 - Commits sin línea de coautoría (regla 8 de `CLAUDE.md`).
 - Se trabajó con la prioridad que pidió KIRO por chat: M2 primero y mínimo, y después M4, M3 y M5.
-- Hoja imprimible: `Imprimibles/Hoja_Cuadrilla.html` (A4, 30 casillas "Predicción ___" y una recta en blanco). Se abre en el navegador y se imprime con Ctrl+P.
+- Hoja imprimible: KIRO ya la tiene en PDF. Queda además `Imprimibles/Hoja_Cuadrilla.html`, hecha antes de que lo avisara.
 - `MENSAJES_CHAT.md`: no apareció en ningún `git pull` (M2, M3, M4 y M5), así que no hubo instrucciones del diseñador que aplicar.
 
 ## 5. Para presentar mañana
-- **Qué abrir:** `Escritorio\Linea0_PRESENTAR.zip` (es la build M5_Completo final; respaldo: `Linea0_M4_Presentable.zip`). Cópialo al pendrive. En el PC del proyector, descomprímelo **completo** (el `.exe` solo no funciona) y abre `Linea0.exe`. No pide internet, instalación ni administrador. Si abre en ventana, Alt+Enter.
+- Qué abrir: `Escritorio\Linea0_Presentacion_0801.zip` (respaldo seguro: `Linea0_Presentacion_0720.zip`). Cópialo al pendrive. En el PC del proyector, descomprímelo completo y abre `Juego/Linea0.exe`: el `.exe` solo no funciona. Si Windows dice "Windows protegió su PC", haz clic en Más información → Ejecutar de todas formas. Si abre en ventana, Alt+Enter. Las instrucciones están en `COMO_ABRIR.txt`, y el guion y las hipótesis en `PARA_PRESENTAR.md`, ambos dentro del zip.
 - **Verificado antes de presentar:**
   - Prueba de humo con `-logFile`: 0 excepciones y 0 errores.
   - Partida automática completa a 1366×768 y 1920×1080 (con fallas, pistas y Saltar): 0 excepciones.
   - Los textos no se salen de sus recuadros.
 - **Modo demo:** Menú → *Modo demo*. Parte en la Zona 2 con 4 cuadrillas y puntos de ejemplo, juega toda la zona (con refuerzos) y termina en el final y el reporte con datos de ejemplo.
 - **Guion de 5 minutos (todo dentro del Modo demo):**
-  1. *(1 min)* Menú → Modo demo. Muestra el marcador de cuadrillas y la cuadrilla DE TURNO.
+  1. *(1 min)* Menú → Modo demo. Pasa rápido "Cómo jugar" y muestra el marcador con la cuadrilla DE TURNO.
   2. *(1,5 min)* 2.1: elige el boleto −5 y presiona Partir. El tren choca con la topera. Clic en la topera agrietada: se abre el túnel. Vuelve a Partir: Apuesta del andén (Espacio la salta), el tren llega a −2 y aparece "¿Quién predijo bien?".
   3. *(1,5 min)* Saltar (arriba a la derecha) hasta 2.7 Sin vía: la cuenta sola, 4 alternativas, y el tren comprueba en la recta.
   4. *(1 min)* El final: plano ℕ ⊂ ℤ ⊂ ℚ ⊂ ℝ, ganadora y "Ver reporte". Cierra con las 4 hipótesis.
