@@ -38,7 +38,8 @@ namespace Linea0.Juego
         static readonly HashSet<TipoPuzzle> Implementados = new HashSet<TipoPuzzle>
         {
             TipoPuzzle.Boletos, TipoPuzzle.Contar, TipoPuzzle.Repartir, TipoPuzzle.SinVia, TipoPuzzle.Divisor,
-            TipoPuzzle.Lupa, TipoPuzzle.Compas, TipoPuzzle.Jerarquia, TipoPuzzle.Serpiente, TipoPuzzle.ContarSaltos
+            TipoPuzzle.Lupa, TipoPuzzle.Compas, TipoPuzzle.Jerarquia, TipoPuzzle.Serpiente, TipoPuzzle.ContarSaltos,
+            TipoPuzzle.Rueda, TipoPuzzle.Clasificar
         };
 
         void Start()
@@ -317,6 +318,8 @@ namespace Linea0.Juego
                 case TipoPuzzle.Jerarquia: return new PuzzleJerarquia();
                 case TipoPuzzle.Serpiente: return new PuzzleSerpiente();
                 case TipoPuzzle.ContarSaltos: return new PuzzleContarSaltos();
+                case TipoPuzzle.Rueda: return new PuzzleRueda();
+                case TipoPuzzle.Clasificar: return new PuzzleClasificar();
             }
             return null;
         }
