@@ -44,7 +44,8 @@ namespace Linea0.Sala
             UI.Ubicar(f.rectTransform, new Vector2(0, 0.5f), new Vector2(tam.y * 0.55f, 0), f.rectTransform.sizeDelta);
             var t = UI.Texto(img.transform, Paleta.Letras[i] + (string.IsNullOrEmpty(extra) ? "" : " " + extra), tamTexto, Paleta.TextoSobre(c));
             t.horizontalOverflow = HorizontalWrapMode.Overflow;
-            UI.Llenar(t.rectTransform, tam.y * 0.85f, 8, 2, 2);
+            t.alignment = TextAnchor.MiddleLeft;
+            UI.Llenar(t.rectTransform, tam.y * 0.95f, 8, 2, 2);
             return img.rectTransform;
         }
     }

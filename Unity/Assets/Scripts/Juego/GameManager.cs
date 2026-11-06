@@ -59,8 +59,8 @@ namespace Linea0.Juego
             P.pista.button.onClick.AddListener(Pista);
             P.saltar.button.onClick.AddListener(() => StartCoroutine(ConfirmarSaltar()));
             P.MostrarJuego(false);
-            if (auto && demoArg) StartCoroutine(Partida(new List<int> { 2 }, false, true, new HashSet<int> { 2 }));
-            else if (auto) StartCoroutine(Partida(Enumerable.Range(0, 7).ToList(), true, false));
+            if (auto && demoArg) StartCoroutine(ConComoJugar(Partida(new List<int> { 2 }, false, true, new HashSet<int> { 2 })));
+            else if (auto) StartCoroutine(ConComoJugar(Partida(Enumerable.Range(0, 7).ToList(), true, false)));
             else StartCoroutine(Menu());
         }
 
@@ -114,18 +114,20 @@ namespace Linea0.Juego
             var st = UI.Texto(raiz, "Inauguración de la línea más nueva de Santiago", 40, Paleta.Via, TextAnchor.MiddleCenter, false);
             UI.Ubicar(st.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -360), new Vector2(1400, 60));
             string elegido = null;
-            BotonMenu(raiz, "Jugar", 40, () => elegido = "jugar");
-            BotonMenu(raiz, "Elegir zona", -80, () => elegido = "zona");
-            BotonMenu(raiz, "Opciones", -200, () => elegido = "opciones");
-            BotonMenu(raiz, "Modo demo", -320, () => elegido = "demo");
+            BotonMenu(raiz, "Jugar", 110, () => elegido = "jugar");
+            BotonMenu(raiz, "Cómo jugar", 0, () => elegido = "como");
+            BotonMenu(raiz, "Elegir zona", -110, () => elegido = "zona");
+            BotonMenu(raiz, "Opciones", -220, () => elegido = "opciones");
+            BotonMenu(raiz, "Modo demo", -330, () => elegido = "demo");
             BotonMenu(raiz, "Salir", -440, () => Application.Quit());
             Captura("menu");
             while (elegido == null) yield return null;
             Destroy(raiz.gameObject);
-            if (elegido == "jugar") yield return Partida(Enumerable.Range(0, 7).ToList(), true, false);
+            if (elegido == "jugar") { yield return ComoJugar(); yield return Partida(Enumerable.Range(0, 7).ToList(), true, false); }
+            else if (elegido == "como") { yield return ComoJugar(); yield return Menu(); }
             else if (elegido == "zona") yield return ElegirZona();
             else if (elegido == "opciones") yield return MenuOpciones();
-            else if (elegido == "demo") yield return Partida(new List<int> { 2 }, false, true, new HashSet<int> { 2 });
+            else if (elegido == "demo") { yield return ComoJugar(); yield return Partida(new List<int> { 2 }, false, true, new HashSet<int> { 2 }); }
         }
 
         IEnumerator MenuOpciones()
@@ -156,6 +158,9 @@ namespace Linea0.Juego
         }
 
         IEnumerator RefrescarLuego(Action a) { yield return null; yield return null; a(); }
+
+        IEnumerator ComoJugar() => Linea0.Sala.ComoJugar.Mostrar(this);
+        IEnumerator ConComoJugar(IEnumerator siguiente) { yield return ComoJugar(); yield return siguiente; }
 
         List<Puzzle> PuzzlesDe(int zona, bool refuerzo) =>
             CargadorNiveles.PuzzlesDeZona(zona, refuerzo).Where(p => Implementados.Contains(p.Tipo)).ToList();
