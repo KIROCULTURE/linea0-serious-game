@@ -58,13 +58,17 @@ Cada build está en `Builds/<hito>/` y comprimida en `Builds/<hito>.zip`. Las pr
 - `MENSAJES_CHAT.md`: no apareció en ningún `git pull` (M2, M3, M4 y M5), así que no hubo instrucciones del diseñador que aplicar.
 
 ## 5. Para presentar mañana
-- **Copiar al pendrive:** `Escritorio\Linea0_M5_Completo.zip` (respaldo: `Linea0_M4_Presentable.zip`). En el PC del proyector, descomprimir y abrir `Linea0.exe`. No pide internet, instalación ni administrador.
-- **Modo demo:** Menú → *Modo demo*. Parte en la Zona 2 con 4 cuadrillas y puntos de ejemplo, juega toda la zona y termina en el final y el reporte.
-- **Si hay 5 minutos:**
-  1. Modo demo y una ronda de cuadrillas: muestra el marcador, la cuadrilla DE TURNO, la Apuesta del andén y "¿Quién predijo bien?".
-  2. 2.1: el choque con la topera. Clic en la topera agrietada abre el túnel y el tren llega a −2.
-  3. Saltar (arriba a la derecha) hasta 2.7 Sin vía.
-  4. El reporte final.
+- **Qué abrir:** `Escritorio\Linea0_PRESENTAR.zip` (es la build M5_Completo final; respaldo: `Linea0_M4_Presentable.zip`). Cópialo al pendrive. En el PC del proyector, descomprímelo **completo** (el `.exe` solo no funciona) y abre `Linea0.exe`. No pide internet, instalación ni administrador. Si abre en ventana, Alt+Enter.
+- **Verificado antes de presentar:**
+  - Prueba de humo con `-logFile`: 0 excepciones y 0 errores.
+  - Partida automática completa a 1366×768 y 1920×1080 (con fallas, pistas y Saltar): 0 excepciones.
+  - Los textos no se salen de sus recuadros.
+- **Modo demo:** Menú → *Modo demo*. Parte en la Zona 2 con 4 cuadrillas y puntos de ejemplo, juega toda la zona (con refuerzos) y termina en el final y el reporte con datos de ejemplo.
+- **Guion de 5 minutos (todo dentro del Modo demo):**
+  1. *(1 min)* Menú → Modo demo. Muestra el marcador de cuadrillas y la cuadrilla DE TURNO.
+  2. *(1,5 min)* 2.1: elige el boleto −5 y presiona Partir. El tren choca con la topera. Clic en la topera agrietada: se abre el túnel. Vuelve a Partir: Apuesta del andén (Espacio la salta), el tren llega a −2 y aparece "¿Quién predijo bien?".
+  3. *(1,5 min)* Saltar (arriba a la derecha) hasta 2.7 Sin vía: la cuenta sola, 4 alternativas, y el tren comprueba en la recta.
+  4. *(1 min)* El final: plano ℕ ⊂ ℤ ⊂ ℚ ⊂ ℝ, ganadora y "Ver reporte". Cierra con las 4 hipótesis.
 - **Hipótesis del prototipo (GDD 9.2):**
   - H1: con predicción obligatoria y puntos al primer intento, el curso piensa la cuenta. Se mide con el % de logros al primer intento por zona.
   - H2: todo el curso participa con un solo PC. Se mide con el promedio de cuadrillas que predicen bien por viaje.
