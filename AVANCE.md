@@ -53,7 +53,7 @@ Cada build está en `Builds/<hito>/` y comprimida en `Builds/<hito>.zip`. Las pr
 - `MENSAJES_CHAT.md`: no apareció en ningún `git pull` (M2, M3, M4 y M5), así que no hubo instrucciones del diseñador que aplicar.
 
 ## 5. Para presentar mañana
-- **Copiar al pendrive:** `Escritorio\Linea0_M2_LoopCompleto.zip` (o el último `Linea0_M*.zip` que haya en el Escritorio). En el PC del proyector, descomprimir y abrir `Linea0.exe`. No pide internet, instalación ni administrador.
+- **Copiar al pendrive:** `Escritorio\Linea0_M5_Completo.zip` (respaldo: `Linea0_M4_Presentable.zip`). En el PC del proyector, descomprimir y abrir `Linea0.exe`. No pide internet, instalación ni administrador.
 - **Modo demo:** Menú → *Modo demo*. Parte en la Zona 2 con 4 cuadrillas y puntos de ejemplo, juega toda la zona y termina en el final y el reporte.
 - **Si hay 5 minutos:**
   1. Modo demo y una ronda de cuadrillas: muestra el marcador, la cuadrilla DE TURNO, la Apuesta del andén y "¿Quién predijo bien?".
