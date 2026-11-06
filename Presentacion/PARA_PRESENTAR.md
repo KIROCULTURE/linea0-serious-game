@@ -1,5 +1,7 @@
 # Línea 0 · Para presentar
 
+Grupo BulletHelp: Darío Valdebenito, Bastián Allende y Alejandro Gómez.
+
 Serious game de matemática para 1° medio (OA 1). Se juega con un PC y un proyector, y el curso se divide en 4 cuadrillas que juegan por turnos.
 
 ## Qué trae esta build

@@ -1,6 +1,6 @@
 # Créditos — Línea 0
 
-Diseño, contenido y dirección: KIRO (Alejandro Gómez Valeria), Diseño de Videojuegos UGM, 2026.
+Grupo BulletHelp: Darío Valdebenito, Bastián Allende y Alejandro Gómez. Diseño de Videojuegos UGM, 2026.
 
 Todo el arte está dibujado con primitivas de Unity (rectángulos, círculos y líneas).
 
