@@ -244,7 +244,7 @@ namespace Linea0.Vista
                 float x = X(k);
                 // durmiente de estación (más alto) en cada entero
                 Rect(capaVia, "Estacion", Paleta.Via, x, YVia + 4, 7, 34);
-                if (!conNumero) continue;
+                if (!conNumero || x < ancho / 2 || x > Ancho - ancho / 2) continue; // no dibujar píldoras cortadas en el borde
                 bool esDestino = destino.HasValue && destino.Value.EsRacional && destino.Value.Valor == new Racional(k);
                 if (esDestino)
                 {
