@@ -214,7 +214,7 @@ namespace Linea0.Puzzles
                     var s = new Senal();
                     Object.Destroy(vag.gameObject);
                     vag = Vagones.Dibujar(V.capaEncima, t, Dec, id => s.Dar(id), -10);
-                    if (G.auto) s.Dar(t[Vagones.SiguienteCorrecto(t)].Id);
+                    if (G.auto) s.Dar(t[AutoFalla ? Expresion.Disponibles(t)[0] : Vagones.SiguienteCorrecto(t)].Id);
                     yield return s.Esperar();
                     int idx = t.FindIndex(k => k.Id == s.valor);
                     Object.Destroy(vag.gameObject);

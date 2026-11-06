@@ -24,6 +24,13 @@ namespace Linea0.Puzzles
 
         public abstract IEnumerator Jugar();
 
+        /// <summary>Corrutinas lanzadas desde clics; se detienen si el puzzle se salta.</summary>
+        public readonly List<Coroutine> extras = new List<Coroutine>();
+        protected void Lanzar(IEnumerator e) => extras.Add(G.StartCoroutine(e));
+
+        /// <summary>Prueba automática con -fallar: el primer intento que cuenta va mal.</summary>
+        protected bool AutoFalla => G.auto && G.fallar && intento == 0;
+
         public static readonly Color[] ColoresPasajero =
         {
             Paleta.Hex("#9B6CD9"), Paleta.Hex("#F28C38"), Paleta.Hex("#3BB6C4"), Paleta.Hex("#E06B9A"), Paleta.Hex("#7A9E3B"), Paleta.Hex("#C9A227")
@@ -189,7 +196,7 @@ namespace Linea0.Puzzles
             botones = Alternativas.Crear(Pa.panel, P.alternativas, k => { if (!descartadas.Contains(k)) s.Dar(k); }, new Vector2(0.5f, 0.5f), centro, 390, 130);
             foreach (int d in descartadas) botones[d].fondo.color = Paleta.ConAlfa(botones[d].fondo.color, 0.25f);
             G.Captura(P.id + "_elegir");
-            if (G.auto) s.Dar(P.correcta);
+            if (G.auto) s.Dar(AutoFalla ? (P.correcta + 1) % 4 : P.correcta);
             yield return s.Esperar();
             for (int i = 0; i < botones.Count; i++)
             {

@@ -28,6 +28,8 @@ namespace Linea0.Juego
         public Opciones opciones = new Opciones();
         public Estado estado;
         public bool auto;
+        public bool fallar;   // prueba automática: equivocarse al primer intento
+        bool demoArg;
         public bool tunelAbierto;
         public int fallasPuzzle;
         bool saltar;
@@ -48,6 +50,8 @@ namespace Linea0.Juego
             for (int i = 0; i < args.Length; i++)
             {
                 if (args[i] == "-auto") auto = true;
+                if (args[i] == "-fallar") fallar = true;
+                if (args[i] == "-demo") demoArg = true;
                 if (args[i] == "-capturas" && i + 1 < args.Length) { dirCapturas = args[i + 1]; Directory.CreateDirectory(dirCapturas); }
             }
             UI.AsegurarEventSystem();
@@ -55,7 +59,8 @@ namespace Linea0.Juego
             P.pista.button.onClick.AddListener(Pista);
             P.saltar.button.onClick.AddListener(() => StartCoroutine(ConfirmarSaltar()));
             P.MostrarJuego(false);
-            if (auto) StartCoroutine(Partida(Enumerable.Range(0, 7).ToList(), true, true));
+            if (auto && demoArg) StartCoroutine(Partida(new List<int> { 2 }, false, true, new HashSet<int> { 2 }));
+            else if (auto) StartCoroutine(Partida(Enumerable.Range(0, 7).ToList(), true, false));
             else StartCoroutine(Menu());
         }
 
@@ -120,7 +125,7 @@ namespace Linea0.Juego
             if (elegido == "jugar") yield return Partida(Enumerable.Range(0, 7).ToList(), true, false);
             else if (elegido == "zona") yield return ElegirZona();
             else if (elegido == "opciones") yield return MenuOpciones();
-            else if (elegido == "demo") yield return Partida(new List<int> { 2 }, false, true);
+            else if (elegido == "demo") yield return Partida(new List<int> { 2 }, false, true, new HashSet<int> { 2 });
         }
 
         IEnumerator MenuOpciones()
@@ -180,19 +185,17 @@ namespace Linea0.Juego
             while (elegida < 0 && !volver) yield return null;
             Destroy(raiz.gameObject);
             if (volver) { yield return Menu(); yield break; }
-            if (refuerzo) S.refuerzoForzado.Add(elegida);
-            yield return Partida(new List<int> { elegida }, false, false);
+            yield return Partida(new List<int> { elegida }, false, false, refuerzo ? new HashSet<int> { elegida } : null);
         }
 
         // ------------------------------------------------------------------ partida
 
-        IEnumerator Partida(List<int> zonas, bool conControles, bool demoAuto)
+        IEnumerator Partida(List<int> zonas, bool conControles, bool demo, HashSet<int> forzadas = null)
         {
-            var refuerzoForzado = S.refuerzoForzado;
             S = new Sesion { conCuadrillas = !sinCuadrillasOpcion };
-            S.refuerzoForzado = refuerzoForzado;
+            if (forzadas != null) S.refuerzoForzado = forzadas;
             tunelAbierto = zonas[0] > 2;
-            if (demoAuto && !auto) { S.conCuadrillas = true; S.CargarEjemplo(); S.refuerzoForzado.Add(2); }
+            if (demo) { S.conCuadrillas = true; S.CargarEjemplo(); }
             else if (S.conCuadrillas) yield return Cuadrillas();
             S.PrimerTurno();
             if (conControles) { estado = Estado.ControlEntrada; yield return Pantallas.Control(this, false); }
@@ -339,7 +342,15 @@ namespace Linea0.Juego
             Coroutine c = null;
             IEnumerator Envolver() { yield return pz.Jugar(); fin = true; }
             c = StartCoroutine(Envolver());
-            while (!fin && !saltar) yield return null;
+            if (auto && fallar) Pista();
+            float t0 = Time.time;
+            while (!fin && !saltar)
+            {
+                // prueba automática de Saltar: un puzzle común y uno con zoom de lupa
+                if (auto && fallar && (p.id == "1.3" || p.id == "4.2") && Time.time - t0 > 2.5f) saltar = true;
+                yield return null;
+            }
+            foreach (var e in pz.extras) if (e != null) StopCoroutine(e);
             if (!fin)
             {
                 StopCoroutine(c);

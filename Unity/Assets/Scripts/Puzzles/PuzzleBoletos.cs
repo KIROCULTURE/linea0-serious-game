@@ -84,6 +84,9 @@ namespace Linea0.Puzzles
         void AutoRuta()
         {
             ruta.Clear(); inv.Clear();
+            int malo = System.Array.FindIndex(P.mano, b => System.Array.IndexOf(P.solucion, System.Array.IndexOf(P.mano, b)) < 0);
+            if (AutoFalla && malo >= 0) { ruta.Add(malo); inv.Add(false); sPartir.Dar(); return; }
+            if (AutoFalla && P.palanca) { ruta.Add(P.solucion[0]); inv.Add(false); sPartir.Dar(); return; }
             for (int k = 0; k < P.solucion.Length; k++) { ruta.Add(P.solucion[k]); inv.Add(P.invertidos != null && P.invertidos.Contains(k)); }
             sPartir.Dar();
         }
@@ -196,7 +199,7 @@ namespace Linea0.Puzzles
                 int k = i;
                 var b = P.mano[i];
                 var bt = Boleto(Pa.panel, b.Etiqueta(), ColorBoleto(b, Dec), () => AMano(k));
-                float w = Mathf.Max(200, b.Etiqueta().Length * 26 + 60);
+                float w = Mathf.Clamp(b.Etiqueta().Length * 26 + 60, 200, 330); // el texto se achica solo
                 UI.Ubicar(bt.rt, new Vector2(0, 0.5f), new Vector2(xm, -16), new Vector2(w, 110), new Vector2(0, 0.5f));
                 xm += w + 24;
                 mano.Add(bt);

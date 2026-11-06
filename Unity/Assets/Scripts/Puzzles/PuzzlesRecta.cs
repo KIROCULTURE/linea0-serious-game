@@ -29,7 +29,7 @@ namespace Linea0.Puzzles
                 frenar.Activo = true;
                 Refrescar();
                 G.Captura(P.id + "_divisor");
-                if (G.auto) { partes = P.partesSolucion; avance = P.avanceSolucion; Refrescar(); sFrenar.Dar(); }
+                if (G.auto) { partes = P.partesSolucion; avance = P.avanceSolucion + (AutoFalla ? 1 : 0); Refrescar(); sFrenar.Dar(); }
                 yield return sFrenar.Esperar();
                 frenar.Activo = false;
                 yield return Linea0.Sala.ApuestaAnden.Correr(G);
@@ -129,7 +129,7 @@ namespace Linea0.Puzzles
                 sFrenar = new Senal();
                 Refrescar();
                 G.Captura(P.id + "_lupa");
-                if (G.auto) { elegido = P.Meta.Valor; sFrenar.Dar(); }
+                if (G.auto) yield return AutoLupa();
                 yield return sFrenar.Esperar();
                 frenar.Activo = false;
                 yield return Linea0.Sala.ApuestaAnden.Correr(G);
@@ -145,11 +145,29 @@ namespace Linea0.Puzzles
             }
         }
 
+        /// <summary>Prueba automática: hace zoom cifra por cifra hasta la meta (o hasta que el guion la marque).</summary>
+        IEnumerator AutoLupa()
+        {
+            var m = P.Meta.Valor;
+            if (AutoFalla) { elegido = m + new Racional(1, 10); Refrescar(); sFrenar.Dar(); yield break; }
+            if (nivel == 0) yield return Zoom(new Racional((long)System.Math.Floor(m.ToDouble())));
+            while (!elegido.HasValue && nivel <= 3)
+            {
+                var paso = Paso(nivel);
+                var q = (m - baseA) / paso;
+                if (q.EsEntero) { elegido = m; break; }
+                if (nivel == 3) { float t = 0; while (!elegido.HasValue && t < 5) { t += Time.deltaTime; yield return null; } break; }
+                yield return Zoom(baseA + new Racional(q.Num / q.Den) * paso);
+            }
+            Refrescar();
+            sFrenar.Dar();
+        }
+
         void ArmarPanel()
         {
             bLupa = UI.BotonContorno(Pa.panel, "Lupa", 48, () => { lupaActiva = !lupaActiva && nivel < 3; Refrescar(); });
             UI.Ubicar(bLupa.rt, new Vector2(0, 0.5f), new Vector2(40, -6), new Vector2(260, 120), new Vector2(0, 0.5f));
-            bAlejar = UI.BotonContorno(Pa.panel, "Alejar", 48, () => G.StartCoroutine(Alejar()));
+            bAlejar = UI.BotonContorno(Pa.panel, "Alejar", 48, () => Lanzar(Alejar()));
             UI.Ubicar(bAlejar.rt, new Vector2(0, 0.5f), new Vector2(330, -6), new Vector2(260, 120), new Vector2(0, 0.5f));
             numero = UI.Texto(Pa.panel, "", 80, Paleta.Texto);
             UI.Ubicar(numero.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(120, -6), new Vector2(700, 130));
@@ -174,7 +192,7 @@ namespace Linea0.Puzzles
             lupaActiva = false;
             Refrescar();
             yield return V.AnimarRango(a.ToDouble(), (a + Paso(nivel - 1)).ToDouble(), 0.6f);
-            if (P.guion == "periodico" && nivel == 3) G.StartCoroutine(Periodico());
+            if (P.guion == "periodico" && nivel == 3) Lanzar(Periodico());
         }
 
         IEnumerator Alejar()
@@ -208,7 +226,7 @@ namespace Linea0.Puzzles
                 for (long k = a; k < b; k++)
                 {
                     long kk = k;
-                    if (lupaActiva) Tramo(capa, k, k + 1, () => G.StartCoroutine(Zoom(new Racional(kk))));
+                    if (lupaActiva) Tramo(capa, k, k + 1, () => Lanzar(Zoom(new Racional(kk))));
                 }
                 return;
             }
@@ -216,7 +234,7 @@ namespace Linea0.Puzzles
             for (int j = 0; j <= 10; j++)
             {
                 var v = baseA + j * paso;
-                if (j < 10 && lupaActiva && nivel < 3) { var vv = v; Tramo(capa, v.ToDouble(), (v + paso).ToDouble(), () => G.StartCoroutine(Zoom(vv))); }
+                if (j < 10 && lupaActiva && nivel < 3) { var vv = v; Tramo(capa, v.ToDouble(), (v + paso).ToDouble(), () => Lanzar(Zoom(vv))); }
                 var img = UI.Caja(capa, "Tic", Paleta.Decimales); img.raycastTarget = false;
                 UI.Ubicar(img.rectTransform, Vector2.zero, new Vector2(V.X(v.ToDouble()), Via.YVia + 20), new Vector2(8, 52));
                 MarcaBoton(capa, v, UI.M(v.ToDecimal(3)), true);

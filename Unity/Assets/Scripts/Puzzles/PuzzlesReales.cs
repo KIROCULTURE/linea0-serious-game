@@ -148,7 +148,7 @@ namespace Linea0.Puzzles
                     foreach (var t in tarjetas) if (t.button.interactable) t.fondo.color = Color.white;
                     tarjetas[elegida].fondo.color = Paleta.Sol;
                     region = -1;
-                    if (G.auto) region = System.Array.IndexOf(Codigos, P.regiones[elegida]);
+                    if (G.auto) region = (System.Array.IndexOf(Codigos, P.regiones[elegida]) + (G.fallar && intentos == 0 ? 1 : 0)) % 4;
                     while (region < 0)
                     {
                         // se puede cambiar de tarjeta antes de elegir región

@@ -26,7 +26,12 @@ Cada build está en `Builds/<hito>/` y comprimida en `Builds/<hito>.zip`. Las pr
 - 5.2 Rueda: la lupa sobre π también se muestra como texto.
 - 5.3 Clasificar: se toca la tarjeta y después la línea (no se arrastra). Da +2 o +1 por tarjeta a la cuadrilla de turno y no tiene Apuesta.
 - Algunas frases de "Nombra" del GDD pasan de 90 caracteres. El texto se achica solo para caber en el cartel, pero a veces ocupa dos líneas.
-- No probado a mano: todo se verificó con la prueba automática (`-auto`), que solo elige respuestas correctas. Las fallas, la pista, Saltar y las opciones están programadas, pero no tienen una prueba que las recorra.
+- No se probó a mano con mouse. Todo se verificó con pruebas automáticas sobre la build, todas sin excepciones:
+  - `-auto`: juega todo con las respuestas correctas.
+  - `-auto -fallar`: se equivoca al primer intento en cada puzzle que lo permite, pide pista y usa Saltar en 1.3 y 4.2.
+  - `-auto -demo`: recorre el Modo demo real.
+  - Quedan sin prueba automática las pantallas de Opciones y Elegir zona. Conviene abrirlas una vez antes de presentar.
+- Corregido: el refuerzo forzado (Modo demo o "Con refuerzo" en Elegir zona) ya no queda pegado para la siguiente partida.
 
 ## 4. Bloqueos y decisiones
 - **Sonido:** kenney.nl rechaza descargas automáticas (403), así que el juego no trae sonido. El GDD lo marca como opcional y ningún contenido depende de él.
