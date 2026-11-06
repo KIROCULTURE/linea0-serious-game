@@ -1,0 +1,6 @@
+Línea 0 — build M0_Base
+Qué incluye: solo el menú inicial con el título. Sirve para comprobar que el proyecto compila y arranca.
+Cómo se juega: todavía no se juega.
+Qué falta: todo el juego (M1 en adelante).
+Duración: —
+Abrir Linea0.exe. Alt+Enter alterna pantalla completa y ventana.
