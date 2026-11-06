@@ -280,12 +280,45 @@ namespace Linea0.Puzzles
             // paso 1: girar el compás
             Central(P.lineasGuion[0]);
             var s = new Senal();
+            float angulo = 45;
+            // punta arrastrable: se gira con centro en el 0 hasta acostarla en la vía
+            var punta = UI.Caja(diag.rectTransform, "Punta", Paleta.Irracionales, UI.Circulo);
+            UI.Ubicar(punta.rectTransform, new Vector2(1, 0.5f), Vector2.zero, new Vector2(56, 56), new Vector2(0.5f, 0.5f));
+            var origen = new Vector2(V.X(0), Via.YVia + 6);
+            punta.gameObject.AddComponent<Arrastre>().alArrastrar = ev =>
+            {
+                if (s.listo) return;
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(V.capaEncima, ev.position, ev.pressEventCamera, out var p);
+                // capaEncima se estira sobre la vía: su origen local está al centro, la vía usa la esquina
+                p += new Vector2(V.capaEncima.rect.width / 2, V.capaEncima.rect.height / 2);
+                var dlt = p - origen;
+                angulo = Mathf.Clamp(Mathf.Atan2(dlt.y, Mathf.Max(1, dlt.x)) * Mathf.Rad2Deg, 0, 45);
+                diag.rectTransform.localRotation = Quaternion.Euler(0, 0, angulo);
+                if (angulo < 4) s.Dar();
+            };
             var b = BotonPrincipal("Girar compás", () => s.Dar());
             G.Captura(P.id + "_compas");
+            if (G.auto && G.fallar)
+            {
+                // prueba automática del arrastre: suelta la punta a 20° y después sobre la vía
+                var arr = punta.GetComponent<Arrastre>();
+                foreach (float grados in new[] { 20f, 0f })
+                {
+                    float rad = grados * Mathf.Deg2Rad, largo = u * Mathf.Sqrt(2);
+                    var local = origen + new Vector2(Mathf.Cos(rad), Mathf.Sin(rad)) * largo - new Vector2(V.capaEncima.rect.width / 2, V.capaEncima.rect.height / 2);
+                    var pantalla = RectTransformUtility.WorldToScreenPoint(null, V.capaEncima.TransformPoint(local));
+                    arr.alArrastrar(new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current) { position = pantalla });
+                    yield return Ease.Pausa(0.3f);
+                    G.Captura(P.id + "_arrastre" + (int)grados);
+                    yield return null; yield return null;
+                }
+            }
             if (G.auto) s.Dar();
             yield return s.Esperar();
             Object.Destroy(b.button.gameObject);
-            yield return Ease.Durante(1.6f, t => diag.rectTransform.localRotation = Quaternion.Euler(0, 0, 45 * (1 - Ease.SuaveInOut(t))));
+            Object.Destroy(punta.gameObject);
+            float a0 = angulo;
+            yield return Ease.Durante(0.3f + 1.3f * a0 / 45f, t => diag.rectTransform.localRotation = Quaternion.Euler(0, 0, a0 * (1 - Ease.SuaveInOut(t))));
             V.marcas.Add(new Via.Marca { valor = System.Math.Sqrt(2), texto = "?", color = Paleta.Irracionales, alto = 80, etiquetaArriba = true, tamTexto = 44 });
             V.Redibujar();
 
