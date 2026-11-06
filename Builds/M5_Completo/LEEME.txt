@@ -1,0 +1,6 @@
+Línea 0 — build M5_Completo (la más completa)
+Qué incluye: las 7 zonas con todos los puzzles del GDD, esenciales y de refuerzo. El ritmo es adaptativo (regla 6.14): si en el control de entrada una zona quedó en "Casi nadie" o "Menos de la mitad", esa zona agrega sus refuerzos.
+Cómo se juega: solo mouse; la cuadrilla de turno decide y las otras predicen en papel. La hoja para imprimir está en Imprimibles/Hoja_Cuadrilla.html del repositorio. Espacio salta la cuenta regresiva y Saltar (arriba a la derecha) salta un puzzle.
+Menú: Jugar, Elegir zona (con interruptor "Con refuerzo"), Opciones (Apuesta, Sin cuadrillas, modo proyector, pantalla completa), Modo demo (~5 min, Zona 2 y reporte).
+Qué falta: sonido.
+Duración: ~26 min solo con esenciales, hasta ~34 con refuerzos. Alt+Enter alterna ventana y pantalla completa. No necesita internet ni instalación.

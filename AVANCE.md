@@ -4,7 +4,9 @@
 | Hito | Qué se ve al jugarla | Duración | ¿Sirve para presentar? |
 |---|---|---|---|
 | M0_Base | Menú con título y "Próximamente" (solo prueba que compila y arranca) | — | No |
-| M4_Presentable | Igual que M2 más pulido: el pasajero baja al llegar, margen para el tren, UI revisada en 1366×768 y 16:10 | ~30 min completo · ~5 min el Modo demo | **Sí (la recomendada)** |
+| M5_Completo | Todo el GDD: las 7 zonas con esenciales y refuerzos, ritmo adaptativo (regla 6.14) y hoja imprimible | 26–34 min completo · ~5 min el Modo demo | **Sí (la recomendada)** |
+| M3_Esencial | Todos los esenciales del GDD, incluidas 5.2 Rueda y 5.3 Clasificar | ~30 min completo | Sí |
+| M4_Presentable | Igual que M2 más pulido: el pasajero baja al llegar, margen para el tren, UI revisada en 1366×768 y 16:10 | ~30 min completo · ~5 min el Modo demo | Sí |
 | M2_LoopCompleto | Juego de punta a punta: menú → cuadrillas → control de entrada → Zonas 0 a 6 (esenciales y Sin vía; refuerzos según la regla 6.14) → control de salida → final con plano, ganadora y reporte. Modo demo, Elegir zona y Opciones | ~30 min completo · ~5 min el Modo demo | **Sí** |
 
 La build M1 no salió por separado: el núcleo (vía, tren, boletos, cuadrillas, marcador, "¿Quién predijo bien?") quedó dentro de M2, porque se pidió priorizar M2.
@@ -19,11 +21,12 @@ Cada build está en `Builds/<hito>/` y comprimida en `Builds/<hito>.zip`. Las pr
 - Prueba automática (para desarrollo): `Linea0.exe -auto -capturas <carpeta>` juega todo solo con las respuestas correctas y guarda capturas de cada pantalla.
 
 ## 3. Pendiente
-- 5.2 Rueda (π) y 5.3 Clasificar: aún no están. En la Zona 5 se juega solo 5.1 (Compás), y Elegir zona muestra la zona igual.
-- 5.1 Compás: la diagonal se gira con un botón ("Girar compás") y no arrastrándola. El divisor y la lupa del paso 2 y 3 se muestran como texto (7/5, 17/12; 1,4 → 1,41 → 1,414…).
-- Pulido M4: animación de puertas y pasajero bajando, zoom con más easing, revisión de textos largos (algunas frases de "Nombra" del GDD pasan de 90 caracteres y se achican solas).
 - Sonido (ver Bloqueos).
-- `Imprimibles/Hoja_Cuadrilla.html` (M5).
+- 5.1 Compás: la diagonal se gira con un botón ("Girar compás") y no arrastrándola. El divisor y la lupa de los pasos 2 y 3 se muestran como texto (7/5, 17/12; 1,4 → 1,41 → 1,414…), sin usar las herramientas.
+- 5.2 Rueda: la lupa sobre π también se muestra como texto.
+- 5.3 Clasificar: se toca la tarjeta y después la línea (no se arrastra). Da +2 o +1 por tarjeta a la cuadrilla de turno y no tiene Apuesta.
+- Algunas frases de "Nombra" del GDD pasan de 90 caracteres. El texto se achica solo para caber en el cartel, pero a veces ocupa dos líneas.
+- No probado a mano: todo se verificó con la prueba automática (`-auto`), que solo elige respuestas correctas. Las fallas, la pista, Saltar y las opciones están programadas, pero no tienen una prueba que las recorra.
 
 ## 4. Bloqueos y decisiones
 - **Sonido:** kenney.nl rechaza descargas automáticas (403), así que el juego no trae sonido. El GDD lo marca como opcional y ningún contenido depende de él.
@@ -45,7 +48,9 @@ Cada build está en `Builds/<hito>/` y comprimida en `Builds/<hito>.zip`. Las pr
 - Tras una falla en un Sin vía, la comprobación muestra la respuesta, así que el segundo intento vale +1.
 - Modo demo: entra directo a la Zona 2 con refuerzo, con 4 cuadrillas y datos de ejemplo en puntos y controles.
 - Commits sin línea de coautoría (regla 8 de `CLAUDE.md`).
-- Se trabajó con la prioridad que pidió KIRO por chat: M2 primero y mínimo, y recién después M4, M3 y M5.
+- Se trabajó con la prioridad que pidió KIRO por chat: M2 primero y mínimo, y después M4, M3 y M5.
+- Hoja imprimible: `Imprimibles/Hoja_Cuadrilla.html` (A4, 30 casillas "Predicción ___" y una recta en blanco). Se abre en el navegador y se imprime con Ctrl+P.
+- `MENSAJES_CHAT.md`: no apareció en ningún `git pull` (M2, M3, M4 y M5), así que no hubo instrucciones del diseñador que aplicar.
 
 ## 5. Para presentar mañana
 - **Copiar al pendrive:** `Escritorio\Linea0_M2_LoopCompleto.zip` (o el último `Linea0_M*.zip` que haya en el Escritorio). En el PC del proyector, descomprimir y abrir `Linea0.exe`. No pide internet, instalación ni administrador.

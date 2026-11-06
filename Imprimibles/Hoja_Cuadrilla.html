@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<title>Línea 0 · Hoja de cuadrilla</title>
+<style>
+  @page { size: A4; margin: 12mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "Atkinson Hyperlegible", Arial, sans-serif; color: #1E2228; margin: 0; }
+  .hoja { width: 186mm; margin: 0 auto; }
+  header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #1E2228; padding-bottom: 3mm; }
+  h1 { font-size: 22pt; margin: 0; }
+  .cuadrilla { font-size: 14pt; }
+  .cuadrilla span { display: inline-block; width: 9mm; height: 9mm; border: 2px solid #1E2228; margin-left: 2mm; vertical-align: middle; text-align: center; line-height: 8mm; font-weight: bold; }
+  .grilla { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3mm; margin-top: 5mm; }
+  .casilla { border: 1.5px solid #5B6470; height: 17mm; padding: 2mm 3mm; font-size: 11pt; display: flex; align-items: flex-end; gap: 2mm; }
+  .casilla b { color: #5B6470; font-size: 10pt; align-self: flex-start; min-width: 7mm; }
+  .linea { flex: 1; border-bottom: 1.5px solid #1E2228; height: 9mm; }
+  .recta { margin-top: 7mm; }
+  .recta h2 { font-size: 12pt; margin: 0 0 2mm; }
+  svg { width: 100%; height: 34mm; }
+  footer { margin-top: 3mm; font-size: 9pt; color: #5B6470; text-align: center; }
+</style>
+</head>
+<body>
+<div class="hoja">
+  <header>
+    <h1>Línea 0 · Hoja de cuadrilla</h1>
+    <div class="cuadrilla">Cuadrilla: <span>A</span><span>B</span><span>C</span><span>D</span> (encierra la tuya)</div>
+  </header>
+
+  <div class="grilla" id="grilla"></div>
+
+  <div class="recta">
+    <h2>Recta numérica en blanco (para pensar el viaje)</h2>
+    <svg viewBox="0 0 700 120" xmlns="http://www.w3.org/2000/svg" id="recta">
+      <line x1="10" y1="60" x2="690" y2="60" stroke="#1E2228" stroke-width="3"/>
+      <polygon points="690,52 700,60 690,68" fill="#1E2228"/>
+      <polygon points="10,52 0,60 10,68" fill="#1E2228"/>
+    </svg>
+  </div>
+  <footer>Escriban dónde va a parar el tren durante la Apuesta del andén y levanten la hoja cuando la Central diga "¡Arriba los papeles!".</footer>
+</div>
+<script>
+  // 30 casillas "Predicción ___"
+  var g = document.getElementById('grilla');
+  for (var i = 1; i <= 30; i++) {
+    var d = document.createElement('div');
+    d.className = 'casilla';
+    d.innerHTML = '<b>' + i + '</b>Predicción <span class="linea"></span>';
+    g.appendChild(d);
+  }
+  // marcas de la recta sin números
+  var s = document.getElementById('recta');
+  for (var x = 30; x <= 670; x += 40) {
+    var l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    l.setAttribute('x1', x); l.setAttribute('x2', x);
+    l.setAttribute('y1', 46); l.setAttribute('y2', 74);
+    l.setAttribute('stroke', '#5B6470'); l.setAttribute('stroke-width', '2');
+    s.appendChild(l);
+  }
+</script>
+</body>
+</html>
