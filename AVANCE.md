@@ -34,7 +34,7 @@ Cada build está en `Builds/<hito>/` y comprimida en `Builds/<hito>.zip`. Las pr
 - Corregido: el refuerzo forzado (Modo demo o "Con refuerzo" en Elegir zona) ya no queda pegado para la siguiente partida.
 
 ## 4. Bloqueos y decisiones
-- **Sonido:** kenney.nl rechaza descargas automáticas (403), así que el juego no trae sonido. El GDD lo marca como opcional y ningún contenido depende de él.
+- Sonido: kenney.nl rechaza descargas automáticas (403), así que el juego no trae sonido. El GDD lo marca como opcional y ningún contenido depende de él.
 - Input: el proyecto quedó con el manejador viejo (`activeInputHandler: 0`), así que se usa `StandaloneInputModule` e `Input.GetKeyDown(KeyCode.Space)`.
 - Texto: se usa `UnityEngine.UI.Text` (uGUI) con Atkinson Hyperlegible como fuente dinámica, en vez de TextMeshPro. Las fuentes SDF de TMP habría que generarlas a mano; la fuente dinámica muestra `−`, `ℕ ℤ ℚ ℝ`, `√` y `π` (con respaldo de fuentes del sistema).
 - Las formas de cuadrilla y alternativa (▲ ● ■ ◆) se dibujan con primitivas, sin depender de la fuente.
