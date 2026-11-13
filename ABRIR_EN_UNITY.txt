@@ -1,0 +1,11 @@
+Línea 0 · Cómo abrir el proyecto en Unity
+
+1. Instala Unity 6000.5.3f1 desde Unity Hub, con el módulo "Windows Build Support" si vas a hacer builds.
+2. Descomprime el zip y, en Unity Hub, usa Add > Add project from disk y elige la carpeta Unity (la que tiene Assets, Packages y ProjectSettings).
+3. La primera vez Unity regenera la carpeta Library; tarda unos minutos.
+4. Abre Assets/Scenes/Main.unity y presiona Play. Si la escena no está, usa el menú Tools > Línea 0 > Generar escena.
+5. Tests: Window > General > Test Runner > EditMode.
+6. Build: Tools > Línea 0 > Build Windows (queda en Builds/Dev/Linea0.exe).
+
+El contenido de los niveles está en Assets/Resources/niveles.json y los textos de la guía en Assets/Resources/guias.json.
+El diseño está en GDD_Linea0.md y el estado del trabajo en AVANCE.md.
