@@ -60,6 +60,7 @@ namespace Linea0.Puzzles
                 if (!(m.EsRacional && m.Valor.EsEntero)) V.letreroDestino = MetaTexto;
             }
             V.Rango(P.RangoMin.ToDouble(), P.RangoMax.ToDouble());
+            if (V.destino.HasValue) Anclas.Poner("destino", () => V.destino.HasValue ? V.Esquinas(V.X(V.destino.Value.ToDouble()), Via.YVia - 64, 170, 96) : null);
             T.Poner(P.Inicio);
         }
 
@@ -141,7 +142,9 @@ namespace Linea0.Puzzles
             var s = new Senal();
             var b = UI.CrearBoton(caja.transform, boton, 46, bien ? Paleta.Racionales : Paleta.Error, () => s.Dar());
             UI.Ubicar(b.rt, new Vector2(1, 0), new Vector2(-30, 26), new Vector2(330, 100), new Vector2(1, 0));
+            Anclas.Poner(bien ? "cuenta" : "cartel", raiz);
             G.Captura(P.id + (bien ? "_acierto" : "_falla"));
+            if (bien) yield return Guia.Pasos(G, P.id, a => a == "cuenta" ? ((System.Func<bool>, System.Action)?)(null, null) : null);
             if (G.auto) { yield return Ease.Pausa(0.4f); s.Dar(); }
             yield return s.Esperar();
             Object.Destroy(raiz.gameObject);

@@ -24,6 +24,13 @@
       "fraseNombre": "Cada estación es un número. Avanzar es sumar.", "cuentaEscrita": "0 + 2 = 2",
       "pistas": ["Mira dónde está el tren y dónde está el destino.", "Pon el boleto en la ruta y presiona Partir.", "Solución: +2."] },
 
+    { "id": "0.2", "zona": 0, "tipo": "Boletos", "esencial": true, "sinPuntos": true,
+      "inicio": "0", "meta": "5", "mano": [ { "operacion": "suma", "valor": "2" }, { "operacion": "suma", "valor": "3" }, { "operacion": "suma", "valor": "4" } ],
+      "casillas": 2, "rangoVia": ["0", "6"], "solucion": [0, 1],
+      "hablante": "Pasajero", "frasePedido": "Voy a la estación 5. ¿Me llevas?",
+      "fraseNombre": "2 + 3 = 5. Puedes juntar varios boletos en un viaje.", "cuentaEscrita": "0 + 2 + 3 = 5",
+      "pistas": ["La estación 5 está 5 estaciones más allá.", "Con dos boletos: ¿qué dos números juntos dan 5?", "Solución: +2 y +3."] },
+
     { "id": "1.1", "zona": 1, "tipo": "Contar", "esencial": true, "cantidad": 5,
       "inicio": "0", "meta": "5", "rangoVia": ["0", "6"],
       "alternativas": ["4", "5", "6", "7"], "correcta": 1,

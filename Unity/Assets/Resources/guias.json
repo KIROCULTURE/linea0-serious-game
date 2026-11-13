@@ -1,0 +1,53 @@
+{
+  "guias": [
+    { "clave": "0.1", "pasos": [
+      { "ancla": "destino", "texto": "La pasajera va a la estación 2: la del anillo rojo.", "espera": "tocar" },
+      { "ancla": "boleto:0", "texto": "Los boletos mueven el tren. Toca el +2.", "espera": "accion" },
+      { "ancla": "partir", "texto": "Ahora parte.", "espera": "accion" },
+      { "ancla": "apuesta", "texto": "Antes de partir, el curso anota dónde va a parar el tren.", "espera": "solo", "soloCurso": true },
+      { "ancla": "cuenta", "texto": "Llegaste. Así se escribe lo que hiciste: 0 + 2 = 2.", "espera": "seguir" } ] },
+    { "clave": "0.2", "pasos": [
+      { "ancla": "ruta", "texto": "Ahora caben dos boletos. Elige los que juntos lleguen a 5.", "espera": "accion" } ] },
+    { "clave": "1.1", "pasos": [
+      { "ancla": "pasajero:0", "texto": "Toca a cada pasajero para contarlo.", "espera": "accion" } ] },
+    { "clave": "1.4", "pasos": [
+      { "ancla": "boleto:0", "texto": "Este boleto repite el mismo salto: 3 saltos de 4.", "espera": "accion" } ] },
+    { "clave": "1.5", "pasos": [
+      { "ancla": "pasajero:0", "texto": "Toca un pasajero: sube al vagón que sigue.", "espera": "accion" } ] },
+    { "clave": "2.1", "pasos": [
+      { "ancla": "topera", "texto": "Toca el muro del cero.", "espera": "accion" } ] },
+    { "clave": "2.4", "pasos": [
+      { "ancla": "palanca", "texto": "Activa Restar: el próximo boleto se da vuelta.", "espera": "accion" },
+      { "ancla": "boleto:0", "texto": "Pon el −3 y mira cómo gira su flecha.", "espera": "accion" } ] },
+    { "clave": "2.5", "pasos": [
+      { "ancla": "boleto:0", "texto": "El espejo lleva el tren al otro lado del cero.", "espera": "accion" } ] },
+    { "clave": "3.1", "pasos": [
+      { "ancla": "dial:partes:+", "texto": "Corta el tramo en 2 partes iguales.", "espera": "accion" },
+      { "ancla": "dial:avanza:+", "texto": "Avanza 1 parte.", "espera": "accion" },
+      { "ancla": "frenar", "texto": "Frena aquí.", "espera": "accion" } ] },
+    { "clave": "3.7", "pasos": [
+      { "ancla": "alternativas", "texto": "Elige cuántos saltos caben. El tren salta y los cuenta.", "espera": "accion" } ] },
+    { "clave": "4.1", "pasos": [
+      { "ancla": "lupa", "texto": "La lupa hace zoom en un tramo.", "espera": "accion" },
+      { "ancla": "tramo:0", "texto": "Toca el tramo entre 0 y 1.", "espera": "accion" },
+      { "ancla": "marca:7", "texto": "Cada marca es una décima. Toca la 7.", "espera": "accion" },
+      { "ancla": "frenar", "texto": "Frena aquí.", "espera": "accion" } ] },
+    { "clave": "5.1", "pasos": [
+      { "ancla": "compas:punta", "texto": "Arrastra la punta de la diagonal hasta la vía.", "espera": "accion", "gesto": "arrastrar" } ] },
+    { "clave": "5.2", "pasos": [
+      { "ancla": "rueda", "texto": "Haz rodar la rueda una vuelta completa.", "espera": "accion" } ] },
+    { "clave": "5.3", "pasos": [
+      { "ancla": "tarjeta:0", "texto": "Lleva cada número a la línea más chica donde cabe.", "espera": "accion", "gesto": "arrastrar" } ] },
+    { "clave": "6.1", "pasos": [
+      { "ancla": "vagon:×", "texto": "Los expresos (× y :) parten primero. Toca el ×.", "espera": "accion" } ] }
+  ],
+  "avisos": [
+    { "clave": "falla", "ancla": "cartel", "texto": "El tren quedó donde cayó y te dice cuánto faltó. Reintentar es gratis." },
+    { "clave": "pista", "ancla": "pista", "texto": "¿Atascado? Pide una pista. Hay tres por puzzle." },
+    { "clave": "quienpredijo", "ancla": "quienpredijo", "texto": "Marca las cuadrillas que anotaron bien dónde paró el tren.", "soloCurso": true },
+    { "clave": "control_curso", "ancla": "alternativas", "texto": "Voten con los dedos: 1, 2, 3 o 4. El profe marca cuántos acertaron.", "soloCurso": true },
+    { "clave": "control_solo", "ancla": "alternativas", "texto": "Elige tu respuesta. La misma pregunta vuelve al final del juego.", "soloSolo": true },
+    { "clave": "sinvia", "ancla": "mantencion", "texto": "Aquí la vía está tapada. Resuelve con números y después el tren comprueba." },
+    { "clave": "serpiente", "ancla": "vagones", "texto": "Aquí no hay prioridad: el tren hace cada paso en orden." }
+  ]
+}

@@ -37,6 +37,35 @@ Revisé las 100 capturas de `-auto` a 1366×768 y 1920×1080, y probé además 1
 
 Textos: con el skill de edición corregí tres frases de pantalla con dos puntos de más ("El destino está 12 estaciones más allá.", "1/4 = 25/100, así que necesitas dos zooms.", "Otra persona toma el mouse para la Zona 3."). Los textos del GDD no se tocaron.
 
+## Fase 2 · F1 Guía, Zona 0 y dos caminos (13 de noviembre)
+
+- **Guía (`Sala/Guia.cs`):** todos sus pasos esperan la acción real del jugador. Cada paso tiene:
+  - foco que oscurece todo menos el objetivo y marco ámbar que late;
+  - mano dibujada con primitivas: llega desde arriba si el objetivo está abajo y desde abajo si está arriba;
+  - globo de una línea con "PASO n DE m", y Seguir solo en los pasos sin acción;
+  - "Ya sé jugar" y bloqueo del resto de la pantalla.
+- **Textos y anclas:**
+  - Los textos están en `Resources/guias.json`, que ya trae también las guías y avisos de F2.
+  - Los objetivos se registran por nombre en `Vista/Anclas.cs` (`destino`, `boleto:0`, `ruta`, `partir`, `apuesta`, `cuenta`, `pista`…).
+- **Zona 0:** 0.1 con sus 5 pasos (el paso 4 solo en modo curso) y el puzzle nuevo 0.2 (0 → 5 con `+2 +3`), con su paso de guía. El test de boletos confirma que solo `+2 +3` llega.
+- **Menú:**
+  - Arriba están "Jugar con el curso" y "Jugar solo".
+  - Abajo, "Para el profe", "Modo demo", "Elegir zona" y "Opciones", más los créditos del grupo.
+  - "Cómo jugar" se muestra solo en el camino del curso.
+- **Modo Solo (`Sesion.modo`):**
+  - Sin cuadrillas, marcador ni "¿Quién predijo bien?".
+  - La Apuesta dura 3 s y dice "Piensa dónde va a parar".
+  - El jugador responde los controles y el juego guarda si acertó (barra llena o vacía en el reporte).
+  - "Sin cuadrillas" salió de Opciones. "Elegir zona" tiene un botón de modo.
+- **Adelantado de F3** (era poco y el menú nuevo lo necesitaba):
+  - Pantalla "Para el profe", con la hoja PDF en `StreamingAssets`.
+  - Créditos en el menú.
+  - En Opciones, "Guías: Sí/No" y "Volver a mostrar las guías".
+- **Memoria:** `PlayerPrefs` con prefijo `linea0_guia_`. Las pruebas automáticas no guardan nada, para no esconder las guías en el PC de KIRO.
+- **Pruebas:**
+  - Tests: 54, todos pasan, con `GuiasTests` nuevo (textos de guía de 70 caracteres o menos y una guía por cada puzzle del GDD).
+  - `-auto` (curso) y `-auto -solo` corren de punta a punta sin excepciones y guardan `guia_<puzzle>_<paso>.png`.
+
 ## 1. Builds
 | Hito | Qué se ve al jugarla | Duración | ¿Sirve para presentar? |
 |---|---|---|---|

@@ -60,6 +60,14 @@ namespace Linea0.Vista
             return v;
         }
 
+        /// <summary>Esquinas en el mundo de un rectángulo dado en coordenadas de vía (x desde la izquierda, y desde abajo, centrado en x, y).</summary>
+        public Vector3[] Esquinas(float x, float y, float w, float h)
+        {
+            var r = rt.rect;
+            Vector3 P(float px, float py) => rt.TransformPoint(new Vector3(r.xMin + px, r.yMin + py));
+            return new[] { P(x - w / 2, y - h / 2), P(x - w / 2, y + h / 2), P(x + w / 2, y + h / 2), P(x + w / 2, y - h / 2) };
+        }
+
         public float Ancho => rt.rect.width;
         public float Alto => rt.rect.height;
         public float X(double v) => (float)((v - min) / (max - min) * Ancho);

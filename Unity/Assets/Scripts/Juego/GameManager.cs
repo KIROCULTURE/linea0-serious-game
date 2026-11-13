@@ -18,6 +18,7 @@ namespace Linea0.Juego
     {
         public bool apuesta = true;
         public bool proyector = true;
+        public bool guias = true;
     }
 
     /// <summary>Máquina de estados del juego: Menú → Cuadrillas → Control de entrada → zonas → Control de salida → Final.</summary>
@@ -35,7 +36,8 @@ namespace Linea0.Juego
         bool saltar;
         string dirCapturas;
         PuzzleBase actual;
-        bool sinCuadrillasOpcion;
+        public string PuzzleActual => actual?.P.id;
+        bool soloElegido;
 
         static readonly HashSet<TipoPuzzle> Implementados = new HashSet<TipoPuzzle>
         {
@@ -52,15 +54,17 @@ namespace Linea0.Juego
                 if (args[i] == "-auto") auto = true;
                 if (args[i] == "-fallar") fallar = true;
                 if (args[i] == "-demo") demoArg = true;
+                if (args[i] == "-solo") soloElegido = true;
                 if (args[i] == "-capturas" && i + 1 < args.Length) { dirCapturas = args[i + 1]; Directory.CreateDirectory(dirCapturas); }
             }
+            opciones.guias = auto || PlayerPrefs.GetInt("linea0_guias", 1) == 1;
             UI.AsegurarEventSystem();
             P = Pantalla.Crear();
             P.pista.button.onClick.AddListener(Pista);
             P.saltar.button.onClick.AddListener(() => StartCoroutine(ConfirmarSaltar()));
             P.MostrarJuego(false);
             if (auto && demoArg) StartCoroutine(ConComoJugar(Partida(new List<int> { 2 }, false, true, new HashSet<int> { 2 })));
-            else if (auto) StartCoroutine(ConComoJugar(Partida(Enumerable.Range(0, 7).ToList(), true, false)));
+            else if (auto) StartCoroutine(Menu());
             else StartCoroutine(Menu());
         }
 
@@ -128,20 +132,81 @@ namespace Linea0.Juego
             var st = UI.Texto(raiz, "Inauguración de la línea más nueva de Santiago", 40, Paleta.Via, TextAnchor.MiddleCenter, false);
             UI.Ubicar(st.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -360), new Vector2(1400, 60));
             string elegido = null;
-            BotonMenu(raiz, "Jugar", 110, () => elegido = "jugar");
-            BotonMenu(raiz, "Cómo jugar", 0, () => elegido = "como");
-            BotonMenu(raiz, "Elegir zona", -110, () => elegido = "zona");
-            BotonMenu(raiz, "Opciones", -220, () => elegido = "opciones");
-            BotonMenu(raiz, "Modo demo", -330, () => elegido = "demo");
-            BotonMenu(raiz, "Salir", -440, () => Application.Quit());
+            // dos caminos (GDD 12.3)
+            BotonCamino(raiz, "Jugar con el curso", "Profe con proyector · 4 cuadrillas · 45 min", Paleta.Enteros, new Vector2(-340, -20), () => elegido = "curso");
+            BotonCamino(raiz, "Jugar solo", "A tu ritmo · unos 30 min", Paleta.Racionales, new Vector2(340, -20), () => elegido = "solo");
+            string[] chicos = { "Para el profe", "Modo demo", "Elegir zona", "Opciones" };
+            string[] claves = { "profe", "demo", "zona", "opciones" };
+            for (int i = 0; i < 4; i++)
+            {
+                string k = claves[i];
+                var b = UI.BotonContorno(raiz, chicos[i], 36, () => elegido = k);
+                UI.Ubicar(b.rt, new Vector2(0.5f, 0.5f), new Vector2(-495 + i * 330, -240), new Vector2(310, 84));
+            }
+            var salir = UI.CrearBoton(raiz, "Salir", 32, Color.white, Application.Quit, Paleta.Gris);
+            UI.Ubicar(salir.rt, new Vector2(0.5f, 0.5f), new Vector2(0, -340), new Vector2(200, 64));
+            var cred = UI.Texto(raiz, Creditos, 28, Paleta.Via, TextAnchor.MiddleCenter, false);
+            UI.Ubicar(cred.rectTransform, new Vector2(0.5f, 0), new Vector2(0, 50), new Vector2(1600, 40));
             Captura("menu");
+            if (auto) { yield return null; yield return null; Destroy(raiz.gameObject); yield return ParaElProfe(false); elegido = soloElegido ? "solo" : "curso"; }
             while (elegido == null) yield return null;
-            Destroy(raiz.gameObject);
-            if (elegido == "jugar") { yield return ComoJugar(); yield return Partida(Enumerable.Range(0, 7).ToList(), true, false); }
-            else if (elegido == "como") { yield return ComoJugar(); yield return Menu(); }
+            if (raiz != null) Destroy(raiz.gameObject);
+            if (elegido == "curso") { soloElegido = false; yield return ComoJugar(); yield return Partida(Enumerable.Range(0, 7).ToList(), true, false); }
+            else if (elegido == "solo") { soloElegido = true; yield return Partida(Enumerable.Range(0, 7).ToList(), true, false); }
+            else if (elegido == "profe") yield return ParaElProfe();
             else if (elegido == "zona") yield return ElegirZona();
             else if (elegido == "opciones") yield return MenuOpciones();
-            else if (elegido == "demo") { yield return ComoJugar(); yield return Partida(new List<int> { 2 }, false, true, new HashSet<int> { 2 }); }
+            else if (elegido == "demo") { soloElegido = false; yield return ComoJugar(); yield return Partida(new List<int> { 2 }, false, true, new HashSet<int> { 2 }); }
+        }
+
+        /// <summary>Pantalla "Para el profe" (GDD 12.8): una sola pantalla, sin scroll.</summary>
+        IEnumerator ParaElProfe(bool volverAlMenu = true)
+        {
+            var raiz = PantallaCompleta("ParaElProfe");
+            var t = UI.Texto(raiz, "Para el profe", 80, Paleta.Texto);
+            UI.Ubicar(t.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -70), new Vector2(1200, 100));
+            string[,] filas =
+            {
+                { "Qué enseña", "Naturales, enteros, fracciones, decimales, una primera mirada a los reales y operaciones combinadas. Matemática 1° medio, Unidad 1, OA 1." },
+                { "Cuánto dura", "Unos 30 minutos de juego en un bloque de 45." },
+                { "Cómo se juega en sala", "Un PC con proyector y el curso en 4 cuadrillas que se turnan. La de turno decide el viaje y las otras anotan en su hoja dónde va a parar el tren." },
+                { "Qué mide", "Las mismas 6 preguntas al inicio y al final, más el reporte por zona." },
+                { "Si algo se traba", "\"Saltar\" (arriba a la derecha) pasa al siguiente puzzle y \"?\" explica el actual." }
+            };
+            for (int i = 0; i < filas.GetLength(0); i++)
+            {
+                float y = -190 - i * 125;
+                var k = UI.Texto(raiz, filas[i, 0], 36, Paleta.Enteros, TextAnchor.UpperRight);
+                UI.Ubicar(k.rectTransform, new Vector2(0.5f, 1), new Vector2(-560, y), new Vector2(440, 100), new Vector2(0.5f, 1));
+                var v = UI.Texto(raiz, filas[i, 1], 32, Paleta.Texto, TextAnchor.UpperLeft, false);
+                UI.Ubicar(v.rectTransform, new Vector2(0.5f, 1), new Vector2(-300, y), new Vector2(1180, 110), new Vector2(0, 1));
+            }
+            var hoja = UI.CrearBoton(raiz, "Abrir la hoja para imprimir", 40, Paleta.Racionales, () =>
+                Application.OpenURL("file:///" + Path.Combine(Application.streamingAssetsPath, "Linea0_Hoja_de_cuadrilla.pdf").Replace('\\', '/')));
+            UI.Ubicar(hoja.rt, new Vector2(0.5f, 0), new Vector2(-260, 150), new Vector2(620, 100));
+            bool listo = false;
+            var volver = UI.BotonContorno(raiz, "Volver", 40, () => listo = true);
+            UI.Ubicar(volver.rt, new Vector2(0.5f, 0), new Vector2(300, 150), new Vector2(300, 100));
+            var cred = UI.Texto(raiz, Creditos, 28, Paleta.Via, TextAnchor.MiddleCenter, false);
+            UI.Ubicar(cred.rectTransform, new Vector2(0.5f, 0), new Vector2(0, 50), new Vector2(1600, 40));
+            Captura("para_el_profe");
+            if (auto) { yield return null; yield return null; listo = true; }
+            while (!listo) yield return null;
+            Destroy(raiz.gameObject);
+            if (volverAlMenu) yield return Menu();
+        }
+
+        public const string Creditos ="Grupo BulletHelp: Darío Valdebenito, Bastián Allende y Alejandro Gómez";
+
+        /// <summary>Botón grande del menú con una línea de detalle debajo.</summary>
+        void BotonCamino(RectTransform padre, string titulo, string detalle, Color col, Vector2 pos, Action a)
+        {
+            var b = UI.CrearBoton(padre, titulo, 56, col, () => a());
+            b.fondo.sprite = UI.Cuadrado; b.fondo.type = Image.Type.Simple;
+            UI.Ubicar(b.rt, new Vector2(0.5f, 0.5f), pos, new Vector2(620, 210));
+            UI.Ubicar(b.texto.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -36), new Vector2(580, 80));
+            var d = UI.Texto(b.rt, detalle, 28, Paleta.TextoSobre(col), TextAnchor.MiddleCenter, false);
+            UI.Ubicar(d.rectTransform, new Vector2(0.5f, 0), new Vector2(0, 40), new Vector2(580, 50));
         }
 
         IEnumerator MenuOpciones()
@@ -154,17 +219,19 @@ namespace Linea0.Juego
             void Refrescar()
             {
                 bA.texto.text = "Apuesta del andén: " + (opciones.apuesta ? "Sí" : "No");
-                bC.texto.text = "Sin cuadrillas: " + (sinCuadrillasOpcion ? "Sí" : "No");
+                bC.texto.text = "Guías: " + (opciones.guias ? "Sí" : "No");
                 bP.texto.text = "Modo proyector: " + (opciones.proyector ? "Sí" : "No");
                 bF.texto.text = "Pantalla completa: " + (Screen.fullScreen ? "Sí" : "No") + "  (Alt+Enter)";
                 P.escalador.referenceResolution = opciones.proyector ? new Vector2(1920, 1080) : new Vector2(2200, 1238);
             }
             bA = BotonMenu(raiz, "", 160, () => { opciones.apuesta = !opciones.apuesta; Refrescar(); });
-            bC = BotonMenu(raiz, "", 40, () => { sinCuadrillasOpcion = !sinCuadrillasOpcion; Refrescar(); });
+            bC = BotonMenu(raiz, "", 40, () => { opciones.guias = !opciones.guias; PlayerPrefs.SetInt("linea0_guias", opciones.guias ? 1 : 0); Refrescar(); });
             bP = BotonMenu(raiz, "", -80, () => { opciones.proyector = !opciones.proyector; Refrescar(); });
             bF = BotonMenu(raiz, "", -200, () => { Screen.fullScreen = !Screen.fullScreen; StartCoroutine(RefrescarLuego(Refrescar)); });
             foreach (var b in new[] { bA, bC, bP, bF }) b.rt.sizeDelta = new Vector2(1000, 104);
-            BotonMenu(raiz, "Volver", -360, () => listo = true);
+            var bO = BotonMenu(raiz, "Volver a mostrar las guías", -320, () => { Linea0.Sala.Guia.Olvidar(); });
+            bO.rt.sizeDelta = new Vector2(1000, 104);
+            BotonMenu(raiz, "Volver", -440, () => listo = true);
             Refrescar();
             while (!listo) yield return null;
             Destroy(raiz.gameObject);
@@ -198,9 +265,12 @@ namespace Linea0.Juego
                 if (!hay) b.texto.text = txt + " · Próximamente";
             }
             bR = UI.BotonContorno(raiz, "Con refuerzo: No", 40, () => { refuerzo = !refuerzo; bR.texto.text = "Con refuerzo: " + (refuerzo ? "Sí" : "No"); });
-            UI.Ubicar(bR.rt, new Vector2(0.5f, 0), new Vector2(-300, 70), new Vector2(520, 96));
+            UI.Ubicar(bR.rt, new Vector2(0.5f, 0), new Vector2(0, 70), new Vector2(440, 96));
+            UI.Boton bM = null;
+            bM = UI.BotonContorno(raiz, soloElegido ? "Modo: Solo" : "Modo: Con el curso", 36, () => { soloElegido = !soloElegido; bM.texto.text = soloElegido ? "Modo: Solo" : "Modo: Con el curso"; });
+            UI.Ubicar(bM.rt, new Vector2(0.5f, 0), new Vector2(-480, 70), new Vector2(440, 96));
             var bv = UI.BotonContorno(raiz, "Volver", 40, () => volver = true);
-            UI.Ubicar(bv.rt, new Vector2(0.5f, 0), new Vector2(300, 70), new Vector2(400, 96));
+            UI.Ubicar(bv.rt, new Vector2(0.5f, 0), new Vector2(480, 70), new Vector2(440, 96));
             while (elegida < 0 && !volver) yield return null;
             Destroy(raiz.gameObject);
             if (volver) { yield return Menu(); yield break; }
@@ -211,7 +281,8 @@ namespace Linea0.Juego
 
         IEnumerator Partida(List<int> zonas, bool conControles, bool demo, HashSet<int> forzadas = null)
         {
-            S = new Sesion { conCuadrillas = !sinCuadrillasOpcion };
+            S = new Sesion { conCuadrillas = !soloElegido };
+            Linea0.Sala.Guia.NuevaPartida();
             if (forzadas != null) S.refuerzoForzado = forzadas;
             tunelAbierto = zonas[0] > 2;
             if (demo) { S.conCuadrillas = true; S.CargarEjemplo(); }

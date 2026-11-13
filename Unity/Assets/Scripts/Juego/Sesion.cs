@@ -10,7 +10,10 @@ namespace Linea0.Juego
         public const int NumCuadrillas = 4;
         public static readonly string[] Niveles = { "Casi nadie", "Menos de la mitad", "Más de la mitad", "Casi todos" };
 
+        public enum Modo { Curso, Solo }
         public bool conCuadrillas = true;
+        /// <summary>GDD 12.3: Curso (cuadrillas, controles votados) o Solo (sin cuadrillas, controles respondidos por el jugador).</summary>
+        public Modo modo { get => conCuadrillas ? Modo.Curso : Modo.Solo; set => conCuadrillas = value == Modo.Curso; }
         public bool[] activas = { true, true, true, true };
         public int[] puntos = new int[NumCuadrillas];
         public int turno;                       // índice de la cuadrilla de turno

@@ -62,7 +62,9 @@ namespace Linea0.Sala
     {
         public static IEnumerator Correr(GameManager g, string pregunta = "Cuadrillas: ¿dónde para el tren? ¡Escríbanlo!")
         {
-            if (!g.opciones.apuesta || !g.S.conCuadrillas) yield break;
+            if (!g.opciones.apuesta) yield break;
+            bool solo = !g.S.conCuadrillas;
+            if (solo) pregunta = pregunta.Contains("¿dónde para el tren?") ? "Piensa dónde va a parar." : "Piensa tu respuesta.";
             var raiz = UI.Llenar(UI.Nodo(g.P.overlay, "Apuesta"));
             var velo = UI.Caja(raiz, "Velo", Paleta.ConAlfa(Paleta.Texto, 0.55f));
             UI.Llenar(velo.rectTransform);
@@ -72,15 +74,23 @@ namespace Linea0.Sala
             UI.Ubicar(n.rectTransform, new Vector2(0.5f, 0.42f), Vector2.zero, new Vector2(600, 300));
             var ayuda = UI.Texto(raiz, "Espacio: saltar", 30, Paleta.Borde);
             UI.Ubicar(ayuda.rectTransform, new Vector2(0.5f, 0.12f), Vector2.zero, new Vector2(600, 40));
-            float dur = g.auto ? 0.3f : 8f, tt = 0;
+            Anclas.Poner("apuesta", n.rectTransform);
+            bool fin = false;
+            // paso de la guía sobre la cuenta regresiva (0.1, solo con el curso): avanza solo cuando termina
+            bool conGuia = g.PuzzleActual != null && Guia.Debe(g, g.PuzzleActual);
+            if (conGuia) g.StartCoroutine(Guia.Pasos(g, g.PuzzleActual, a => a == "apuesta" ? ((System.Func<bool>, System.Action)?)(() => fin, null) : null));
+            float dur = solo ? 3f : 8f, tt = 0;
+            if (g.auto) dur = conGuia ? 1f : 0.3f;
             yield return null;
             while (tt < dur)
             {
                 n.text = Mathf.CeilToInt(dur - tt).ToString();
-                if (Input.GetKeyDown(KeyCode.Space)) break;
+                if (Input.GetKeyDown(KeyCode.Space) && !Guia.EnPantalla) break;
                 tt += Time.deltaTime;
                 yield return null;
             }
+            fin = true;
+            if (solo) { Object.Destroy(raiz.gameObject); yield break; }
             t.text = "";
             n.text = "¡Arriba los papeles!";
             n.fontSize = 120; n.resizeTextMaxSize = 120;
@@ -174,8 +184,34 @@ namespace Linea0.Sala
                 UI.Ubicar(n.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -140), new Vector2(1600, 50));
                 var tx = UI.Texto(cuerpo, pr.texto, 60, Paleta.Texto);
                 UI.Ubicar(tx.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -240), new Vector2(1760, 140));
-                var botones = Alternativas.Crear(cuerpo, pr.alternativas, null, new Vector2(0.5f, 0.5f), new Vector2(0, 20));
+                bool solo = !g.S.conCuadrillas;
+                var eleccion = new Senal();
+                var botones = Alternativas.Crear(cuerpo, pr.alternativas, solo ? (System.Action<int>)(k => { if (!eleccion.listo) eleccion.Dar(k); }) : null, new Vector2(0.5f, 0.5f), new Vector2(0, 20));
                 foreach (var b in botones) b.button.interactable = true;
+                var rts = new RectTransform[botones.Count];
+                for (int i = 0; i < rts.Length; i++) rts[i] = botones[i].rt;
+                Anclas.Poner("alternativas", rts);
+                if (q == 0 && !salida) yield return Guia.Aviso(g, solo ? "control_solo" : "control_curso");
+                if (solo)
+                {
+                    // modo Solo (GDD 12.3): el mismo jugador responde y el juego registra si acertó
+                    if (g.auto) eleccion.Dar(salida || q % 2 == 0 ? pr.correcta : (pr.correcta + 1) % 4);
+                    yield return eleccion.Esperar();
+                    res[q] = eleccion.valor == pr.correcta ? 3 : 0;
+                    for (int i = 0; i < botones.Count; i++)
+                        UI.Atenuar(botones[i], Paleta.Cuadrillas[i], salida ? i != pr.correcta : i != eleccion.valor);
+                    if (salida)
+                    {
+                        var ok = UI.Texto(cuerpo, "Respuesta: " + UI.M(pr.alternativas[pr.correcta]), 50, Paleta.Racionales);
+                        UI.Ubicar(ok.rectTransform, new Vector2(0.5f, 0), new Vector2(0, 290), new Vector2(1200, 70));
+                    }
+                    var seguir = new Senal();
+                    var bs = UI.CrearBoton(cuerpo, "Seguir", 44, Paleta.Texto, () => seguir.Dar());
+                    UI.Ubicar(bs.rt, new Vector2(0.5f, 0), new Vector2(0, 110), new Vector2(320, 100));
+                    if (g.auto) seguir.Dar();
+                    yield return seguir.Esperar();
+                    continue;
+                }
                 var cuenta = UI.Texto(cuerpo, "", 90, Paleta.Error);
                 UI.Ubicar(cuenta.rectTransform, new Vector2(0.5f, 0), new Vector2(0, 300), new Vector2(400, 110));
                 var ayuda = UI.Texto(cuerpo, "Voten con 1 a 4 dedos o con tarjetas de color · Espacio: saltar", 30, Paleta.Gris, TextAnchor.MiddleCenter, false);

@@ -4,6 +4,7 @@ using System.Linq;
 using Linea0.Datos;
 using Linea0.Juego;
 using Linea0.Matematica;
+using Linea0.Sala;
 using Linea0.Vista;
 using UnityEngine;
 using UnityEngine.UI;
@@ -42,6 +43,7 @@ namespace Linea0.Puzzles
                 sPartir = new Senal();
                 Refrescar();
                 G.Captura(P.id + "_ruta");
+                if (intento == 0 && fallas == 0) yield return Guia.Pasos(G, P.id, AccionGuia);
                 if (G.auto) AutoRuta();
                 yield return sPartir.Esperar();
                 partir.Activo = false;
@@ -79,6 +81,21 @@ namespace Linea0.Puzzles
                 if (ok) yield break;
                 Reiniciar();
             }
+        }
+
+        /// <summary>Qué acción espera cada objetivo de la guía y cómo la hace la prueba automática.</summary>
+        (System.Func<bool>, System.Action)? AccionGuia(string ancla)
+        {
+            if (ancla == "destino") return (null, null);
+            if (ancla == "ruta") return (() => ruta.Count == P.casillas, () => { foreach (int k in P.solucion) AMano(k); });
+            if (ancla == "partir") return (() => sPartir.listo, () => sPartir.Dar());
+            if (ancla == "palanca") return (() => palancaActiva, () => { palancaActiva = true; Refrescar(); });
+            if (ancla.StartsWith("boleto:"))
+            {
+                int k = int.Parse(ancla.Substring(7));
+                return (() => ruta.Contains(k), () => AMano(k));
+            }
+            return null;
         }
 
         void AutoRuta()
@@ -210,6 +227,10 @@ namespace Linea0.Puzzles
                 UI.Ubicar(palanca.rt, new Vector2(1, 0.5f), new Vector2(-430, -16), new Vector2(330, 110), new Vector2(1, 0.5f));
             }
             partir = BotonPrincipal("Partir", () => { if (ruta.Count > 0) sPartir?.Dar(); });
+            for (int i = 0; i < mano.Count; i++) Anclas.Poner("boleto:" + i, mano[i].rt);
+            Anclas.Poner("ruta", casillas.ToArray());
+            Anclas.Poner("partir", partir.rt);
+            if (palanca != null) Anclas.Poner("palanca", palanca.rt);
         }
 
         public static UI.Boton Boleto(Transform padre, string texto, Color c, UnityEngine.Events.UnityAction a)

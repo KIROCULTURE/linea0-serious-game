@@ -150,6 +150,8 @@ namespace Linea0.Vista
 
         public void LimpiarPuzzle()
         {
+            Anclas.Limpiar();
+            Anclas.Poner("pista", pista.rt);
             UI.Limpiar(panel);
             var lp = UI.Caja(panel, "Linea", Paleta.Borde);
             lp.rectTransform.anchorMin = new Vector2(0, 1); lp.rectTransform.anchorMax = new Vector2(1, 1);
