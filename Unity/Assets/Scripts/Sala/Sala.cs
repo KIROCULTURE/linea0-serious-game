@@ -122,7 +122,7 @@ namespace Linea0.Sala
                 bool deTurno = i == s.turno;
                 var b = UI.CrearBoton(caja, "", 40, Color.white, null, Paleta.Texto);
                 UI.Ubicar(b.rt, new Vector2(0.5f, 0.5f), new Vector2(x, 0), new Vector2(230, 110));
-                var pil = Marcador.Pildora(b.rt, i, deTurno ? "turno" : "", Vector2.zero, new Vector2(210, 90), 36);
+                var pil = Marcador.Pildora(b.rt, i, "", Vector2.zero, new Vector2(210, 90), 36);
                 var chk = UI.Texto(b.rt, "", 60, Paleta.Racionales);
                 UI.Ubicar(chk.rectTransform, new Vector2(1, 1), new Vector2(-10, 0), new Vector2(60, 60));
                 if (deTurno) { b.Activo = false; pil.GetComponent<Image>().color = Color.Lerp(Paleta.Cuadrillas[i], Paleta.Borde, 0.75f); }
@@ -137,6 +137,8 @@ namespace Linea0.Sala
             var listo = new Senal();
             var bl = UI.CrearBoton(caja, "Listo", 48, Paleta.Texto, () => listo.Dar());
             UI.Ubicar(bl.rt, new Vector2(0.5f, 0), new Vector2(0, 50), new Vector2(300, 96));
+            Anclas.Poner("quienpredijo", (RectTransform)caja);
+            yield return Guia.Aviso(g, "quienpredijo");
             if (g.auto) { marcadas[(s.turno + 1) % 4] = true; listo.Dar(); }
             yield return listo.Esperar();
             int aciertos = 0;

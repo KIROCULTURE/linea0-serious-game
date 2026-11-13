@@ -4,6 +4,7 @@ using System.Linq;
 using Linea0.Datos;
 using Linea0.Juego;
 using Linea0.Matematica;
+using Linea0.Sala;
 using Linea0.Vista;
 using UnityEngine;
 using UnityEngine.UI;
@@ -46,6 +47,7 @@ namespace Linea0.Puzzles
                     bool clic = alClic != null && disp.Contains(i);
                     int id = k.Id;
                     var b = UI.CrearBoton(raiz, s, 64, col, clic ? () => alClic(id) : (UnityEngine.Events.UnityAction)null);
+                    if (clic) Anclas.Poner("vagon:" + s, b.rt);
                     b.fondo.sprite = UI.Cuadrado; b.fondo.type = Image.Type.Simple;
                     UI.Ubicar(b.rt, new Vector2(0.5f, 1), pos, new Vector2(w, 100));
                     b.Activo = alClic == null || clic;
@@ -99,6 +101,8 @@ namespace Linea0.Puzzles
             while (true)
             {
                 Tapar();
+                Anclas.Poner("mantencion", letrero);
+                yield return Guia.Aviso(G, "sinvia");
                 yield return Elegir(s, new Vector2(0, -6));
                 yield return Linea0.Sala.ApuestaAnden.Correr(G, "Cuadrillas: ¿cuánto da? ¡Escríbanlo!");
                 bool ok = s.valor == P.correcta;
@@ -214,6 +218,7 @@ namespace Linea0.Puzzles
                     var s = new Senal();
                     Object.Destroy(vag.gameObject);
                     vag = Vagones.Dibujar(V.capaEncima, t, Dec, id => s.Dar(id), -10);
+                    yield return Guia.Pasos(G, P.id, a => a == "vagon:×" ? ((System.Func<bool>, System.Action)?)(() => s.listo, () => s.Dar(t[Vagones.SiguienteCorrecto(t)].Id)) : null);
                     if (G.auto) s.Dar(t[AutoFalla ? Expresion.Disponibles(t)[0] : Vagones.SiguienteCorrecto(t)].Id);
                     yield return s.Esperar();
                     int idx = t.FindIndex(k => k.Id == s.valor);
@@ -248,6 +253,8 @@ namespace Linea0.Puzzles
                 PrepararVia(false);
                 T.Poner(t[0].Valor);
                 var vag = Vagones.Dibujar(V.capaEncima, t, Dec, null, -10);
+                Anclas.Poner("vagones", vag);
+                yield return Guia.Aviso(G, "serpiente");
                 yield return Elegir(s, new Vector2(0, -6));
                 yield return Linea0.Sala.ApuestaAnden.Correr(G, "Cuadrillas: ¿dónde termina la serpiente? ¡Escríbanlo!");
                 while (!Expresion.Terminada(t))

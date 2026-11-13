@@ -40,6 +40,8 @@ namespace Linea0.Puzzles
             var s = new Senal();
             var b = BotonPrincipal("Rodar una vuelta", () => s.Dar());
             b.texto.fontSize = b.texto.resizeTextMaxSize = 40;
+            Anclas.Poner("rueda", b.rt);
+            yield return Guia.Pasos(G, P.id, a => a == "rueda" ? ((System.Func<bool>, System.Action)?)(() => s.listo, () => s.Dar()) : null);
             G.Captura(P.id + "_rueda");
             if (G.auto) s.Dar();
             yield return s.Esperar();
@@ -151,8 +153,13 @@ namespace Linea0.Puzzles
                 };
                 tarjetas.Add(c);
             }
+            Anclas.Poner("tarjeta:0", tarjetas[0].rt);
+            Anclas.Poner("tarjeta:0:fin", regiones[System.Array.IndexOf(Codigos, P.regiones[0])].rectTransform);
+            // la guía corre en paralelo: la tarjeta se suelta fuera del hueco y el juego la sigue recibiendo
+            Lanzar(Guia.Pasos(G, P.id, a => a == "tarjeta:0" ? ((System.Func<bool>, System.Action)?)(() => !tarjetas[0].button.interactable, null) : null));
             G.Captura(P.id + "_plano");
             int restantes = P.cartas.Length;
+            if (G.auto) yield return Ease.Pausa(0.8f); // deja que la prueba capture la guía de la tarjeta
             while (restantes > 0)
             {
                 int intentos = 0;

@@ -180,6 +180,8 @@ namespace Linea0.Puzzles
                 bt.onClick.AddListener(() => s.Dar());
             }
             else s.Dar();
+            Anclas.Poner("topera", () => V.toperaRT != null ? Anclas.Esquinas(V.toperaRT) : null);
+            yield return Guia.Pasos(G, P.id, a => a == "topera" ? ((System.Func<bool>, System.Action)?)(() => s.listo, () => s.Dar()) : null);
             G.Captura(P.id + "_topera");
             if (G.auto) s.Dar();
             float t = 0;

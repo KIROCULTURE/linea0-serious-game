@@ -27,6 +27,7 @@ namespace Linea0.Sala
         static readonly HashSet<string> saltadas = new HashSet<string>();   // "Ya sé jugar" en esta partida
         static readonly HashSet<string> repetir = new HashSet<string>();    // "Ver cómo se hace"
         static readonly HashSet<string> avisosSesion = new HashSet<string>();
+        static readonly HashSet<string> vistasSesion = new HashSet<string>();   // completas en esta partida
         public static bool EnPantalla;
 
         const string Prefijo = "linea0_guia_";
@@ -46,10 +47,10 @@ namespace Linea0.Sala
             foreach (var gd in Datos.guias) PlayerPrefs.DeleteKey(Prefijo + gd.clave);
             foreach (var a in Datos.avisos) PlayerPrefs.DeleteKey(Prefijo + "aviso_" + a.clave);
             PlayerPrefs.Save();
-            saltadas.Clear(); avisosSesion.Clear();
+            saltadas.Clear(); avisosSesion.Clear(); vistasSesion.Clear();
         }
 
-        public static void NuevaPartida() { saltadas.Clear(); avisosSesion.Clear(); }
+        public static void NuevaPartida() { saltadas.Clear(); avisosSesion.Clear(); vistasSesion.Clear(); }
 
         public static GuiaDatos Buscar(string clave) => Datos.guias.FirstOrDefault(x => x.clave == clave);
 
@@ -60,7 +61,7 @@ namespace Linea0.Sala
             (!soloCurso || g.S.conCuadrillas) && (!soloSolo || !g.S.conCuadrillas);
 
         public static bool Debe(GameManager g, string clave) =>
-            Buscar(clave) != null && !saltadas.Contains(clave) &&
+            Buscar(clave) != null && !saltadas.Contains(clave) && (repetir.Contains(clave) || !vistasSesion.Contains(clave)) &&
             (repetir.Contains(clave) || (g.opciones.guias && (g.auto || !Visto(clave))));
 
         class Resultado { public bool saltada; }
@@ -77,7 +78,7 @@ namespace Linea0.Sala
             var res = new Resultado();
             yield return Mostrar(g, p.ancla, p.texto, "PASO " + n + " DE " + m, p.espera, p.gesto, hecho, auto, "guia_" + clave + "_" + n, res);
             if (res.saltada) saltadas.Add(clave);
-            if (res.saltada || n == m) { Marcar(g, clave); repetir.Remove(clave); }
+            if (res.saltada || n == m) { Marcar(g, clave); repetir.Remove(clave); vistasSesion.Add(clave); }
         }
 
         /// <summary>Todos los pasos de una guía cuyo ancla resuelve 'accion' (los demás los muestra quien corresponda).</summary>
@@ -216,9 +217,12 @@ namespace Linea0.Sala
                     mano.anchoredPosition = punta;
 
                     // globo abajo del objetivo si cabe; si no, arriba; nunca encima del hueco
-                    float gx = Mathf.Clamp(h.center.x + ancho / 2 + 110, R.xMin + ancho / 2 + 20, R.xMax - ancho / 2 - 20);
-                    float abajo = h.yMin - 30 - alto / 2, arriba = h.yMax + 30 + alto / 2;
-                    float gy = abajo - alto / 2 > R.yMin + 10 ? abajo : arriba + alto / 2 < R.yMax - 10 ? arriba : R.center.y;
+                    // el globo va más allá de la mano (del lado por donde llega), para que no se tapen
+                    float gx = Mathf.Clamp(h.center.x, R.xMin + ancho / 2 + 20, R.xMax - ancho / 2 - 20);
+                    float lejos = desdeArriba ? h.yMax + 175 + alto / 2 : h.yMin - 175 - alto / 2;
+                    float cerca = desdeArriba ? h.yMin - 30 - alto / 2 : h.yMax + 30 + alto / 2;
+                    bool cabe(float y) => y - alto / 2 > R.yMin + 10 && y + alto / 2 < R.yMax - Pantalla.AltoBarra;
+                    float gy = cabe(lejos) ? lejos : cabe(cerca) ? cerca : R.center.y;
                     globo.anchoredPosition = new Vector2(gx, gy);
                 }
                 else globo.anchoredPosition = new Vector2(0, R.yMin + 260);

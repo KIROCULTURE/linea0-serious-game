@@ -37,6 +37,23 @@ Revisé las 100 capturas de `-auto` a 1366×768 y 1920×1080, y probé además 1
 
 Textos: con el skill de edición corregí tres frases de pantalla con dos puntos de más ("El destino está 12 estaciones más allá.", "1/4 = 25/100, así que necesitas dos zooms.", "Otra persona toma el mouse para la Zona 3."). Los textos del GDD no se tocaron.
 
+## Fase 2 · F2 Herramientas y avisos (13 de noviembre)
+
+- **Guía de primera vez (GDD 12.6)** en 1.1, 1.4, 1.5, 2.1, 2.4, 2.5, 3.1, 3.7, 4.1, 5.1, 5.2, 5.3 y 6.1. Cada paso espera la acción real: tocar el pasajero, poner el boleto, activar la palanca, subir el dial, hacer zoom, tocar la marca, frenar, arrastrar, tocar el vagón ×.
+  - En 5.1 y 5.3 la mano hace el recorrido del arrastre.
+  - En 5.3 la guía corre en paralelo, porque la tarjeta se suelta fuera del hueco.
+- **Avisos por evento (GDD 12.5):** primera falla, Pista que parpadea (tras 2 fallas), primer "¿Quién predijo bien?", primer control (curso o solo), primer Sin vía y Serpiente.
+  - Cada aviso aparece una vez por partida.
+  - Con "Guías: Sí" queda guardado en el PC.
+- **Repartir:** además del botón, se puede tocar al pasajero que sigue, como dice la guía.
+- **Cambios de diseño:**
+  - El globo va del lado contrario a la mano, para que no se tapen.
+  - En "¿Quién predijo bien?", la cuadrilla de turno ya no dice "turno" encima de su letra.
+- **Pruebas:**
+  - La prueba automática hace la acción de cada paso y guarda `guia_<puzzle>_<paso>.png` y `aviso_<evento>.png`.
+  - Con `-fallar` se ven los avisos de falla y de pista.
+  - Una guía completa no se repite en la misma partida, ni siquiera en las pruebas.
+
 ## Fase 2 · F1 Guía, Zona 0 y dos caminos (13 de noviembre)
 
 - **Guía (`Sala/Guia.cs`):** todos sus pasos esperan la acción real del jugador. Cada paso tiene:

@@ -26,7 +26,7 @@ namespace Linea0.Vista
             return min.x > max.x ? null : new[] { min, new Vector3(min.x, max.y), max, new Vector3(max.x, min.y) };
         };
 
-        static Vector3[] Esquinas(RectTransform rt)
+        public static Vector3[] Esquinas(RectTransform rt)
         {
             if (rt == null || !rt.gameObject.activeInHierarchy) return null;
             var c = new Vector3[4];

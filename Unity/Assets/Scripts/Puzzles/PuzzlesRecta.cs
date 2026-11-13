@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Linea0.Juego;
 using Linea0.Matematica;
+using Linea0.Sala;
 using Linea0.Vista;
 using UnityEngine;
 using UnityEngine.UI;
@@ -28,6 +29,10 @@ namespace Linea0.Puzzles
                 sFrenar = new Senal();
                 frenar.Activo = true;
                 Refrescar();
+                if (intento == 0 && fallas == 0) yield return Guia.Pasos(G, P.id, a =>
+                    a == "dial:partes:+" ? ((System.Func<bool>, System.Action)?)(() => partes == P.partesSolucion, () => { partes = P.partesSolucion; Refrescar(); }) :
+                    a == "dial:avanza:+" ? ((System.Func<bool>, System.Action)?)(() => avance == P.avanceSolucion, () => { avance = P.avanceSolucion; Refrescar(); }) :
+                    a == "frenar" ? ((System.Func<bool>, System.Action)?)(() => sFrenar.listo, () => sFrenar.Dar()) : null);
                 G.Captura(P.id + "_divisor");
                 if (G.auto) { partes = P.partesSolucion; avance = P.avanceSolucion + (AutoFalla ? 1 : 0); Refrescar(); sFrenar.Dar(); }
                 yield return sFrenar.Esperar();
@@ -66,7 +71,7 @@ namespace Linea0.Puzzles
             Pedido();
         }
 
-        Text Dial(string titulo, float x, System.Action menos, System.Action mas, bool bloqueado)
+        Text Dial(string titulo, float x, System.Action menos, System.Action mas, bool bloqueado, string clave)
         {
             Etiqueta(Pa.panel, titulo, 26, Paleta.Via, new Vector2(0, 1), new Vector2(x, -28), new Vector2(380, 34)).GetComponent<Text>().alignment = TextAnchor.MiddleLeft;
             var bm = UI.CrearBoton(Pa.panel, "◀", 50, bloqueado ? Paleta.Borde : Paleta.Texto, () => { menos(); Refrescar(); });
@@ -76,17 +81,20 @@ namespace Linea0.Puzzles
             var bp = UI.CrearBoton(Pa.panel, "▶", 50, bloqueado ? Paleta.Borde : Paleta.Texto, () => { mas(); Refrescar(); });
             UI.Ubicar(bp.rt, new Vector2(0, 0.5f), new Vector2(x + 270, -16), new Vector2(110, 110), new Vector2(0, 0.5f));
             if (bloqueado) { bm.Activo = false; bp.Activo = false; }
+            Anclas.Poner("dial:" + clave + ":+", bp.rt);
+            Anclas.Poner("dial:" + clave + ":-", bm.rt);
             return t;
         }
 
         void ArmarPanel()
         {
             bool fijo = P.dialFijo > 0;
-            tPartes = Dial(fijo ? "PARTES (BLOQUEADO)" : "PARTES DEL TRAMO", 40, () => partes = Mathf.Max(1, partes - 1), () => partes = Mathf.Min(12, partes + 1), fijo);
-            tAvance = Dial("PARTES QUE AVANZA", 480, () => avance = Mathf.Max(0, avance - 1), () => avance++, false);
+            tPartes = Dial(fijo ? "PARTES (BLOQUEADO)" : "PARTES DEL TRAMO", 40, () => partes = Mathf.Max(1, partes - 1), () => partes = Mathf.Min(12, partes + 1), fijo, "partes");
+            tAvance = Dial("PARTES QUE AVANZA", 480, () => avance = Mathf.Max(0, avance - 1), () => avance++, false, "avanza");
             fraccion = UI.Texto(Pa.panel, "", 80, Paleta.Racionales);
             UI.Ubicar(fraccion.rectTransform, new Vector2(0, 0.5f), new Vector2(1080, -10), new Vector2(260, 130));
             frenar = BotonPrincipal("Frenar", () => sFrenar?.Dar());
+            Anclas.Poner("frenar", frenar.rt);
         }
 
         void Refrescar()
@@ -128,6 +136,11 @@ namespace Linea0.Puzzles
             {
                 sFrenar = new Senal();
                 Refrescar();
+                if (intento == 0 && fallas == 0) yield return Guia.Pasos(G, P.id, a =>
+                    a == "lupa" ? ((System.Func<bool>, System.Action)?)(() => lupaActiva || nivel > 0, () => { lupaActiva = true; Refrescar(); }) :
+                    a == "tramo:0" ? ((System.Func<bool>, System.Action)?)(() => nivel >= 1, () => Lanzar(Zoom(Racional.Cero))) :
+                    a == "marca:7" ? ((System.Func<bool>, System.Action)?)(() => elegido == new Racional(7, 10), () => { elegido = new Racional(7, 10); Refrescar(); }) :
+                    a == "frenar" ? ((System.Func<bool>, System.Action)?)(() => sFrenar.listo, () => sFrenar.Dar()) : null);
                 G.Captura(P.id + "_lupa");
                 if (G.auto) yield return AutoLupa();
                 yield return sFrenar.Esperar();
@@ -172,6 +185,8 @@ namespace Linea0.Puzzles
             numero = UI.Texto(Pa.panel, "", 80, Paleta.Texto);
             UI.Ubicar(numero.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(120, -6), new Vector2(700, 130));
             frenar = BotonPrincipal("Frenar", () => { if (elegido.HasValue) sFrenar?.Dar(); });
+            Anclas.Poner("frenar", frenar.rt);
+            Anclas.Poner("lupa", bLupa.rt);
         }
 
         void Refrescar()
@@ -226,7 +241,7 @@ namespace Linea0.Puzzles
                 for (long k = a; k < b; k++)
                 {
                     long kk = k;
-                    if (lupaActiva) Tramo(capa, k, k + 1, () => Lanzar(Zoom(new Racional(kk))));
+                    if (lupaActiva) Anclas.Poner("tramo:" + k, Tramo(capa, k, k + 1, () => Lanzar(Zoom(new Racional(kk)))));
                 }
                 return;
             }
@@ -237,24 +252,26 @@ namespace Linea0.Puzzles
                 if (j < 10 && lupaActiva && nivel < 3) { var vv = v; Tramo(capa, v.ToDouble(), (v + paso).ToDouble(), () => Lanzar(Zoom(vv))); }
                 var img = UI.Caja(capa, "Tic", Paleta.Decimales); img.raycastTarget = false;
                 UI.Ubicar(img.rectTransform, Vector2.zero, new Vector2(V.X(v.ToDouble()), Via.YVia + 20), new Vector2(8, 52));
-                if (!v.EsEntero) MarcaBoton(capa, v, UI.M(v.ToDecimal(3)), true); // los enteros ya tienen su píldora
+                if (!v.EsEntero) Anclas.Poner("marca:" + j, MarcaBoton(capa, v, UI.M(v.ToDecimal(3)), true)); // los enteros ya tienen su píldora
             }
         }
 
-        void Tramo(RectTransform capa, double a, double b, UnityEngine.Events.UnityAction alClic)
+        RectTransform Tramo(RectTransform capa, double a, double b, UnityEngine.Events.UnityAction alClic)
         {
             var img = UI.Caja(capa, "Tramo", Paleta.ConAlfa(Paleta.Decimales, 0.22f));
             UI.Ubicar(img.rectTransform, Vector2.zero, new Vector2((V.X(a) + V.X(b)) / 2, Via.YVia + 130), new Vector2(Mathf.Abs(V.X(b) - V.X(a)) - 6, 200));
             var bt = img.gameObject.AddComponent<Button>();
             bt.onClick.AddListener(alClic);
+            return img.rectTransform;
         }
 
-        void MarcaBoton(RectTransform capa, Racional v, string texto, bool chica)
+        RectTransform MarcaBoton(RectTransform capa, Racional v, string texto, bool chica)
         {
-            if (v.ToDouble() < V.min || v.ToDouble() > V.max) return;
+            if (v.ToDouble() < V.min || v.ToDouble() > V.max) return null;
             bool sel = elegido.HasValue && elegido.Value == v;
             var b = UI.CrearBoton(capa, texto, chica ? 30 : 40, sel ? Paleta.Enteros : (chica ? Paleta.Decimales : Paleta.Naturales), () => { elegido = v; Refrescar(); });
             UI.Ubicar(b.rt, Vector2.zero, new Vector2(V.X(v.ToDouble()), Via.YVia - 64), chica ? new Vector2(Mathf.Min(140, V.PxPorUnidad * (float)Paso(nivel).ToDouble() - 6), 54) : new Vector2(104, 62));
+            return b.rt;
         }
     }
 
@@ -297,6 +314,9 @@ namespace Linea0.Puzzles
                 if (angulo < 4) s.Dar();
             };
             var b = BotonPrincipal("Girar compás", () => s.Dar());
+            Anclas.Poner("compas:punta", punta.rectTransform);
+            Anclas.Poner("compas:punta:fin", () => V.Esquinas(V.X(System.Math.Sqrt(2)), Via.YVia + 6, 40, 40));
+            if (!G.fallar) yield return Guia.Pasos(G, P.id, a => a == "compas:punta" ? ((System.Func<bool>, System.Action)?)(() => s.listo, () => s.Dar()) : null);
             G.Captura(P.id + "_compas");
             if (G.auto && G.fallar)
             {

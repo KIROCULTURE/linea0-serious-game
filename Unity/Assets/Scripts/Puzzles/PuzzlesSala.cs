@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Linea0.Juego;
 using Linea0.Matematica;
+using Linea0.Sala;
 using Linea0.Vista;
 using UnityEngine;
 using UnityEngine.UI;
@@ -36,6 +37,8 @@ namespace Linea0.Puzzles
                 gente.Add(per);
             }
             Etiqueta(Pa.panel, "Toca a cada pasajero para contarlo.", 40, Paleta.Via, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1400, 80));
+            Anclas.Poner("pasajero:0", (RectTransform)gente[0].GetChild(1));
+            yield return Guia.Pasos(G, P.id, a => a == "pasajero:0" ? ((System.Func<bool>, System.Action)?)(() => contados > 0, () => gente[0].GetChild(1).GetComponent<Button>().onClick.Invoke()) : null);
             G.Captura(P.id + "_contar");
             if (G.auto) listo.Dar();
             yield return listo.Esperar();
@@ -102,10 +105,14 @@ namespace Linea0.Puzzles
                 var b = UI.CrearBoton(raiz, "Mandar pasajero", 44, Paleta.Naturales, () => clic.Dar());
                 UI.Ubicar(b.rt, new Vector2(0, 0), new Vector2(230, Via.YVia - 80), new Vector2(420, 96));
                 boton = b.button;
+                // también se puede tocar al pasajero que sigue (GDD 12.6)
+                foreach (var per in anden) { var cuerpo = per.GetChild(1).GetComponent<Image>(); cuerpo.raycastTarget = true; cuerpo.gameObject.AddComponent<Button>().onClick.AddListener(() => clic.Dar()); }
+                Anclas.Poner("pasajero:0", () => mandados < repartibles ? Anclas.Esquinas((RectTransform)anden[cantidad - 1 - mandados].GetChild(1)) : null);
+                yield return Guia.Pasos(g, g.PuzzleActual, a => a == "pasajero:0" ? ((System.Func<bool>, System.Action)?)(() => clic.listo, () => clic.Dar()) : null);
             }
             while (mandados < repartibles)
             {
-                if (porClic && !g.auto) { clic.Reset(); yield return clic.Esperar(); }
+                if (porClic && !g.auto) { if (!clic.listo) yield return clic.Esperar(); clic.Reset(); }
                 else yield return Ease.Pausa(0.12f);
                 var per = anden[cantidad - 1 - mandados];
                 int v = siguiente;

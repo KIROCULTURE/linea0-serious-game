@@ -116,6 +116,7 @@ namespace Linea0.Puzzles
                 fallas++;
                 G.fallasPuzzle = fallas;
                 yield return Cartel(false, cuentaFalla, "", "", "Reintentar");
+                if (fallas >= 2) yield return Guia.Aviso(G, "pista"); // la Pista empieza a parpadear
             }
         }
 
@@ -144,6 +145,7 @@ namespace Linea0.Puzzles
             UI.Ubicar(b.rt, new Vector2(1, 0), new Vector2(-30, 26), new Vector2(330, 100), new Vector2(1, 0));
             Anclas.Poner(bien ? "cuenta" : "cartel", raiz);
             G.Captura(P.id + (bien ? "_acierto" : "_falla"));
+            if (!bien) yield return Guia.Aviso(G, "falla");
             if (bien) yield return Guia.Pasos(G, P.id, a => a == "cuenta" ? ((System.Func<bool>, System.Action)?)(null, null) : null);
             if (G.auto) { yield return Ease.Pausa(0.4f); s.Dar(); }
             yield return s.Esperar();
@@ -198,6 +200,10 @@ namespace Linea0.Puzzles
             s.Reset();
             botones = Alternativas.Crear(Pa.panel, P.alternativas, k => { if (!descartadas.Contains(k)) s.Dar(k); }, new Vector2(0.5f, 0.5f), centro, 390, 130);
             foreach (int d in descartadas) UI.Atenuar(botones[d], Paleta.Cuadrillas[d], true);
+            var rts = new RectTransform[botones.Count];
+            for (int i = 0; i < rts.Length; i++) rts[i] = botones[i].rt;
+            Anclas.Poner("alternativas", rts);
+            yield return Guia.Pasos(G, P.id, a => a == "alternativas" ? ((System.Func<bool>, System.Action)?)(() => s.listo, () => s.Dar(P.correcta)) : null);
             G.Captura(P.id + "_elegir");
             if (G.auto) s.Dar(AutoFalla ? (P.correcta + 1) % 4 : P.correcta);
             yield return s.Esperar();
