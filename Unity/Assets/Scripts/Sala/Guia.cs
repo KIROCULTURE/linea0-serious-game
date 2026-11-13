@@ -118,8 +118,36 @@ namespace Linea0.Sala
 
         static void Poner(RectTransform rt, Rect r) { rt.anchoredPosition = r.min; rt.sizeDelta = r.size; }
 
-        /// <summary>Mano que apunta con el índice hacia arriba (punta del dedo = pivote).</summary>
+        static Sprite manoSprite;
+
+        /// <summary>Mano que apunta con el índice hacia arriba (punta del dedo = pivote).
+        /// Imagen: "hand_point_n" del Cursor Pack de Kenney (CC0); si faltara, se dibuja con primitivas.</summary>
         static RectTransform Mano(Transform padre)
+        {
+            if (manoSprite == null)
+            {
+                var tex = Resources.Load<Texture2D>("Guia/mano");
+                if (tex != null)
+                {
+                    tex.filterMode = FilterMode.Bilinear;
+                    // punta del dedo en x = 28 px, y = 3 px desde arriba, en la imagen de 64 × 64 (variante con contorno)
+                    manoSprite = Sprite.Create(tex, new UnityEngine.Rect(0, 0, tex.width, tex.height), new Vector2(28.5f / 64f, 1f - 3f / 64f), 100);
+                }
+            }
+            if (manoSprite != null)
+            {
+                var img = UI.Caja(padre, "Mano", Color.white, manoSprite);
+                img.raycastTarget = false;
+                var rt = img.rectTransform;
+                rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
+                rt.pivot = manoSprite.pivot / manoSprite.rect.size;
+                rt.sizeDelta = new Vector2(120, 120);
+                return rt;
+            }
+            return ManoPrimitiva(padre);
+        }
+
+        static RectTransform ManoPrimitiva(Transform padre)
         {
             var raiz = UI.Nodo(padre, "Mano");
             raiz.anchorMin = raiz.anchorMax = new Vector2(0.5f, 0.5f);
