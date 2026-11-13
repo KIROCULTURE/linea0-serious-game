@@ -17,12 +17,19 @@ Lee esto completo y después `GDD_Linea0.md`. El GDD manda en diseño y contenid
 - Prueba automática: `-auto` completa las guías haciendo las acciones; nuevo `-auto -solo`; con `-capturas` guarda una captura por paso de guía (`guia_<puzzle>_<paso>.png`).
 
 **Hitos fase 2** (cada uno: compila, tests, commit, tag, build, zip portátil, release `build-<hito>-HHMM`, copia al Escritorio, `AVANCE.md`, `git pull` y lectura de `MENSAJES_CHAT.md`):
+- **F0 · Arreglos visuales (máximo 45 min, primero):** KIRO vio íconos corridos o mal centrados. Corre `-auto -capturas` a 1366×768 y 1920×1080 y mira cada captura. Revisa, como mínimo:
+  - formas de cuadrilla y alternativa (▲ ● ■ ◆) centradas dentro de su píldora o botón;
+  - números centrados en las píldoras de estación, en los boletos y en los botones (horizontal y vertical);
+  - íconos y textos de la barra superior alineados en una misma línea;
+  - flechas de los boletos, palanca y marcas de la vía en su lugar;
+  - nada encimado ni cortado en los bordes.
+  Anota cada defecto en `AVANCE.md` con su captura de antes y corrígelo en el origen (pivotes, anclas, `sizeDelta`, alineación del `Text`), sin parches de posición a mano. Sube a `docs/capturas/antes_despues/` un par de capturas por arreglo. Build `F0_Visual`.
 - **F1 · Guía + Zona 0 + dos caminos:** sistema de guía, 0.1 con sus 5 pasos, 0.2 nuevo, menú con "Jugar con el curso" / "Jugar solo" y modo Solo funcionando de punta a punta (controles respondidos por el jugador, Apuesta de 3 s, sin cuadrillas). Build `F1_Guia`.
 - **F2 · Herramientas:** guía de primera vez de cada herramienta (GDD 12.6) y avisos por evento (GDD 12.5). Build `F2_Herramientas`.
 - **F3 · Ayudas:** botón "?" (GDD 12.7), pantalla "Para el profe" (GDD 12.8) con `Imprimibles/Linea0_Hoja_de_cuadrilla.pdf` copiado a `StreamingAssets` y abierto con `Application.OpenURL`, créditos del grupo en el menú, y en Opciones "Guías: Sí/No" y "Volver a mostrar las guías". Build `F3_Ayudas`.
 - **F4 · Revisión:** correr `-auto`, `-auto -solo`, `-auto -fallar` y `-auto -demo` con capturas, sin excepciones, a 1366×768 y 1920×1080. Subir a `docs/capturas/` las capturas de cada paso de guía y una de cada pantalla nueva (máximo 40). Release final.
 
-Si no alcanza el tiempo, el orden de prioridad es F1, F2, F3, F4.
+Si no alcanza el tiempo, el orden de prioridad es F0, F1, F2, F3, F4. Todo lo nuevo de F1 a F3 se centra con anclas y pivotes, igual que lo arreglado en F0.
 
 ## Contexto (fase 1)
 - KIRO (estudiante de Diseño de Videojuegos, UGM) necesita un **prototipo funcional para presentar mañana**. No es el producto final: el gameloop tiene que funcionar de inicio a fin y verse presentable.
