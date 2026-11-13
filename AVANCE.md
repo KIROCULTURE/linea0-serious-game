@@ -13,7 +13,7 @@ Lo que trae (fase 2, hasta F3):
 - Arreglos visuales de F0.
 - Todo lo de la fase 1 (build-0801).
 
-Pasa los 54 tests y la prueba automática sin excepciones. Las pruebas de F4 a 1366×768 y 1920×1080 en los 4 modos estaban corriendo al publicar este release. No tiene sonido.
+Pasa los 54 tests y la prueba automática sin excepciones. También pasó las pruebas de F4: los 4 modos a 1366×768 y 1920×1080, sin excepciones. No tiene sonido.
 
 Releases anteriores, por si algo falla:
 - build-F3_Ayudas-0859: igual, con la mano dibujada con primitivas.
@@ -39,6 +39,24 @@ Revisé las 100 capturas de `-auto` a 1366×768 y 1920×1080, y probé además 1
 | 11 | Repartir: pasajeros encima de la topera y botón sobre la vía | | El andén oculta la topera y el botón queda bajo la vía |
 
 Textos: con el skill de edición corregí tres frases de pantalla con dos puntos de más ("El destino está 12 estaciones más allá.", "1/4 = 25/100, así que necesitas dos zooms.", "Otra persona toma el mouse para la Zona 3."). Los textos del GDD no se tocaron.
+
+## Fase 2 · F4 Revisión (13 de noviembre)
+
+| Prueba | 1366×768 | 1920×1080 |
+|---|---|---|
+| `-auto` (curso) | 133 capturas, 0 excepciones, llega al reporte | 133, 0, sí |
+| `-auto -solo` | 115, 0, sí | 115, 0, sí |
+| `-auto -fallar` | 171, 0, sí | 171, 0, sí |
+| `-auto -demo` | 28, 0, sí | 28, 0, sí |
+
+- En `docs/capturas/fase2/` hay 35 capturas a 1920×1080:
+  - un paso de guía por archivo (`guia_<puzzle>_<paso>.png`, 25 en total);
+  - los avisos de control (curso y solo), "¿Quién predijo bien?", Sin vía, Serpiente y falla;
+  - el menú nuevo, "Para el profe", la tarjeta del "?" y la primera lámina de "Cómo jugar".
+- Release final: [build-F4_Revision-0913](https://github.com/KIROCULTURE/linea0-serious-game/releases/tag/build-F4_Revision-0913), el mismo código que pasó estas pruebas. El proyecto Unity para abrir en otro PC está en el release [proyecto-unity-0920](https://github.com/KIROCULTURE/linea0-serious-game/releases/tag/proyecto-unity-0920).
+- Sin cubrir:
+  - El aviso de la Pista que parpadea, porque la prueba falla solo una vez por puzzle.
+  - La "prueba de los 5 minutos" con una persona real (GDD 12.9), que se hace con alguien de verdad antes de entregar.
 
 ## Fase 2 · F3 Ayudas (13 de noviembre)
 
