@@ -36,6 +36,7 @@ namespace Linea0.Juego
         bool saltar;
         string dirCapturas;
         PuzzleBase actual;
+        bool reiniciar;
         public string PuzzleActual => actual?.P.id;
         bool soloElegido;
 
@@ -61,6 +62,7 @@ namespace Linea0.Juego
             UI.AsegurarEventSystem();
             P = Pantalla.Crear();
             P.pista.button.onClick.AddListener(Pista);
+            P.ayuda.button.onClick.AddListener(() => { if (actual != null && !Linea0.Sala.Guia.EnPantalla && !ayudaAbierta) StartCoroutine(Ayuda()); });
             P.saltar.button.onClick.AddListener(() => StartCoroutine(ConfirmarSaltar()));
             P.MostrarJuego(false);
             if (auto && demoArg) StartCoroutine(ConComoJugar(Partida(new List<int> { 2 }, false, true, new HashSet<int> { 2 })));
@@ -433,23 +435,89 @@ namespace Linea0.Juego
             IEnumerator Envolver() { yield return pz.Jugar(); fin = true; }
             c = StartCoroutine(Envolver());
             if (auto && fallar) Pista();
+            if (auto && (p.id == "2.3" || (fallar && p.id == "1.4" && !probadoVer))) StartCoroutine(Ayuda()); // prueba del botón "?"
             float t0 = Time.time;
-            while (!fin && !saltar)
+            while (!fin && !saltar && !reiniciar)
             {
                 // prueba automática de Saltar: un puzzle común y uno con zoom de lupa
                 if (auto && fallar && (p.id == "1.3" || p.id == "4.2") && Time.time - t0 > 2.5f) saltar = true;
                 yield return null;
             }
             foreach (var e in pz.extras) if (e != null) StopCoroutine(e);
+            if (reiniciar)
+            {
+                // "Ver cómo se hace": el mismo puzzle vuelve a empezar con su guía
+                StopCoroutine(c);
+                reiniciar = false;
+                for (int i = P.overlay.childCount - 1; i >= 0; i--) Destroy(P.overlay.GetChild(i).gameObject);
+                Linea0.Sala.Guia.EnPantalla = false;
+                actual = null;
+                yield return JugarPuzzle(p);
+                yield break;
+            }
             if (!fin)
             {
                 StopCoroutine(c);
                 pz.R.saltado = true;
                 for (int i = P.overlay.childCount - 1; i >= 0; i--) Destroy(P.overlay.GetChild(i).gameObject);
+                Linea0.Sala.Guia.EnPantalla = false;
                 if (p.guion == "choque") tunelAbierto = true;
             }
             actual = null;
             P.LimpiarPuzzle();
+        }
+
+        bool ayudaAbierta, probadoVer;
+
+        static readonly Dictionary<TipoPuzzle, string> ComoSeUsa = new Dictionary<TipoPuzzle, string>
+        {
+            { TipoPuzzle.Boletos, "Pon boletos en la ruta y presiona Partir. Cada boleto mueve el tren." },
+            { TipoPuzzle.Contar, "Toca a cada pasajero. El número que aparece es cuántos van." },
+            { TipoPuzzle.Repartir, "Toca los pasajeros: suben por turno a cada vagón." },
+            { TipoPuzzle.Divisor, "Elige en cuántas partes iguales se corta el tramo y cuántas avanza el tren. Después frena." },
+            { TipoPuzzle.Lupa, "Toca la lupa y un tramo para hacer zoom. Cada zoom agrega una cifra después de la coma." },
+            { TipoPuzzle.ContarSaltos, "Elige cuántos saltos del tamaño indicado caben en el tramo." },
+            { TipoPuzzle.SinVia, "Resuelve la cuenta y elige la alternativa. Después el tren comprueba." },
+            { TipoPuzzle.Compas, "Arrastra la punta de la diagonal hasta acostarla sobre la vía." },
+            { TipoPuzzle.Rueda, "Haz rodar la rueda una vuelta y frena donde quedó el punto rojo." },
+            { TipoPuzzle.Clasificar, "Arrastra cada número a la línea más chica que lo contiene." },
+            { TipoPuzzle.Jerarquia, "Toca los vagones en el orden en que parten: ( ), después × :, después + −." },
+            { TipoPuzzle.Serpiente, "Predice dónde termina. El tren hace cada paso en orden." }
+        };
+
+        /// <summary>Botón "?" (GDD 12.7): qué hay que lograr y cómo se usa la herramienta. No cuenta como pista.</summary>
+        IEnumerator Ayuda()
+        {
+            var p = actual.P;
+            ayudaAbierta = true;
+            var v = P.Ventana(new Vector2(1400, 560));
+            var caja = v.GetChild(1);
+            var t = UI.Texto(caja, "¿Qué hay que hacer?", 56, Paleta.Texto);
+            UI.Ubicar(t.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -50), new Vector2(1300, 70));
+            string meta = string.IsNullOrEmpty(p.meta) ? "" : "  ·  Destino: " + (!string.IsNullOrEmpty(p.letreroMeta) ? p.letreroMeta : UI.M(p.Meta.ToTexto(p.UsaDecimales)));
+            string[,] filas = { { "Lo que hay que lograr", "\"" + p.frasePedido + "\"" + meta }, { "Cómo se usa", ComoSeUsa[p.Tipo] } };
+            for (int i = 0; i < 2; i++)
+            {
+                var k = UI.Texto(caja, filas[i, 0], 30, Paleta.Enteros, TextAnchor.UpperLeft);
+                UI.Ubicar(k.rectTransform, new Vector2(0.5f, 1), new Vector2(-620, -140 - i * 150), new Vector2(1240, 40), new Vector2(0, 1));
+                var x = UI.Texto(caja, filas[i, 1], 38, Paleta.Texto, TextAnchor.UpperLeft, false);
+                UI.Ubicar(x.rectTransform, new Vector2(0.5f, 1), new Vector2(-620, -185 - i * 150), new Vector2(1240, 100), new Vector2(0, 1));
+            }
+            bool cerrar = false, ver = false;
+            // "Ver cómo se hace" repite la guía del puzzle que estrena la herramienta (en los demás, la guía depende de otros valores)
+            if (Linea0.Sala.Guia.Buscar(p.id) != null)
+            {
+                var b = UI.CrearBoton(caja, "Ver cómo se hace", 40, Paleta.Racionales, () => ver = true);
+                UI.Ubicar(b.rt, new Vector2(0.5f, 0), new Vector2(-220, 50), new Vector2(460, 96));
+            }
+            var c = UI.BotonContorno(caja, "Cerrar", 40, () => cerrar = true);
+            UI.Ubicar(c.rt, new Vector2(0.5f, 0), new Vector2(Linea0.Sala.Guia.Buscar(p.id) != null ? 240 : 0, 50), new Vector2(300, 96));
+            Captura("ayuda_" + p.id);
+            if (auto) { yield return null; yield return null; if (fallar && p.id == "1.4" && !probadoVer) { probadoVer = true; ver = true; } else cerrar = true; }
+            while (!cerrar && !ver) yield return null;
+            Destroy(v.gameObject);
+            ayudaAbierta = false;
+            if (ver) { Linea0.Sala.Guia.Repetir(p.id); reiniciar = true; }
         }
 
         int pistaNivel;

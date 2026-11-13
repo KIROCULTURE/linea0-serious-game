@@ -37,6 +37,17 @@ Revisé las 100 capturas de `-auto` a 1366×768 y 1920×1080, y probé además 1
 
 Textos: con el skill de edición corregí tres frases de pantalla con dos puntos de más ("El destino está 12 estaciones más allá.", "1/4 = 25/100, así que necesitas dos zooms.", "Otra persona toma el mouse para la Zona 3."). Los textos del GDD no se tocaron.
 
+## Fase 2 · F3 Ayudas (13 de noviembre)
+
+- **Botón "?" (GDD 12.7)** junto a Pista. Abre una tarjeta con "Lo que hay que lograr" (la frase del pasajero y el destino) y "Cómo se usa" (el texto del GDD según el tipo de puzzle). No cuenta como pista ni quita puntos.
+- **"Ver cómo se hace"** reinicia el puzzle con su guía. Aparece solo en el puzzle que estrena la herramienta (0.1, 0.2, 1.1, 1.4, 1.5, 2.1, 2.4, 2.5, 3.1, 3.7, 4.1, 5.1, 5.2, 5.3 y 6.1).
+  - Decisión: en los demás puzzles la guía no calza, porque sus pasos dependen de los valores del puzzle que la estrena (por ejemplo, "Toca la 7" en 4.1). Ahí la tarjeta explica la herramienta con texto.
+- **Ya estaban desde F1:**
+  - Pantalla "Para el profe" (GDD 12.8), con "Abrir la hoja para imprimir", que abre `StreamingAssets/Linea0_Hoja_de_cuadrilla.pdf` con `Application.OpenURL`.
+  - Créditos del grupo en el menú y en "Para el profe".
+  - En Opciones, "Guías: Sí/No" (guardado en el PC) y "Volver a mostrar las guías".
+- **Pruebas:** con `-auto` se abre el "?" en 2.3. Con `-auto -fallar` se prueba "Ver cómo se hace" en 1.4 (reinicia y vuelve a guiar). No hubo excepciones.
+
 ## Fase 2 · F2 Herramientas y avisos (13 de noviembre)
 
 - **Guía de primera vez (GDD 12.6)** en 1.1, 1.4, 1.5, 2.1, 2.4, 2.5, 3.1, 3.7, 4.1, 5.1, 5.2, 5.3 y 6.1. Cada paso espera la acción real: tocar el pasajero, poner el boleto, activar la palanca, subir el dial, hacer zoom, tocar la marca, frenar, arrastrar, tocar el vagón ×.

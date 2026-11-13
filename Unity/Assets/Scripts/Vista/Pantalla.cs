@@ -11,7 +11,7 @@ namespace Linea0.Vista
         public RectTransform raiz, juego, barra, dialogo, viaRT, panel, capaPuzzle, overlay;
         public Image zonaPill;
         public Text zonaTexto, reloj;
-        public UI.Boton pista, saltar;
+        public UI.Boton pista, saltar, ayuda;
         public RectTransform marcadorRT;
         public RectTransform hablanteIcono;
         public Text hablanteNombre, dialogoTexto;
@@ -58,7 +58,9 @@ namespace Linea0.Vista
             UI.Ubicar(p.marcadorRT, new Vector2(0.5f, 0.5f), new Vector2(40, 4), new Vector2(680, 80));
 
             p.reloj = UI.Texto(p.barra, "7:00", 52, Paleta.Texto);
-            UI.Ubicar(p.reloj.rectTransform, new Vector2(1, 0.5f), new Vector2(-350, 0), new Vector2(170, 70));
+            UI.Ubicar(p.reloj.rectTransform, new Vector2(1, 0.5f), new Vector2(-405, 0), new Vector2(170, 70));
+            p.ayuda = UI.BotonContorno(p.barra, "?", 44, null);
+            UI.Ubicar(p.ayuda.rt, new Vector2(1, 0.5f), new Vector2(-338, 0), new Vector2(72, 72));
 
             p.pista = UI.BotonContorno(p.barra, "Pista", 40, null);
             UI.Ubicar(p.pista.rt, new Vector2(1, 0.5f), new Vector2(-140, 0), new Vector2(180, 72));
@@ -152,6 +154,7 @@ namespace Linea0.Vista
         {
             Anclas.Limpiar();
             Anclas.Poner("pista", pista.rt);
+            Anclas.Poner("ayuda", ayuda.rt);
             UI.Limpiar(panel);
             var lp = UI.Caja(panel, "Linea", Paleta.Borde);
             lp.rectTransform.anchorMin = new Vector2(0, 1); lp.rectTransform.anchorMax = new Vector2(1, 1);
