@@ -2,7 +2,29 @@
 
 Lee esto completo y después `GDD_Linea0.md`. El GDD manda en diseño y contenido; este archivo manda en lo técnico y en cómo trabajar.
 
-## Contexto
+## Fase 2 (13 de noviembre): que el juego se entienda solo
+**Lee esta sección primero.** La fase 1 ("presentar mañana", trabajo nocturno, hitos M0–M5) ya se entregó: release build-0801. Las reglas 1 a 8 de abajo siguen valiendo.
+
+**Objetivo:** GDD sección 12. Un profe o un alumno con solo el `.exe` entiende en menos de 5 minutos de qué se trata y cómo se resuelve cada desafío, sin que nadie le explique. Referencia visual del paso guiado: `docs/mockup_guia.png`.
+
+**Excepción a la regla 5:** se agrega el puzzle 0.2 de GDD 12.4 (cálculo ya verificado). Nada más nuevo en contenido matemático.
+
+**Piezas nuevas**
+- `Sala/Guia.cs`: foco (oscurece todo menos el objetivo), marco ámbar que late, mano de primitivas (toque o arrastre), globo con una línea, "Paso n de m", botón Seguir solo en pasos sin acción, "Ya sé jugar" y bloqueo de todo lo que no sea el objetivo. API en corrutina, por ejemplo `Paso(ancla, texto, hecho, gesto, conSeguir)`. Memoria con `PlayerPrefs` (`Visto(clave)`, `Marcar(clave)`), que respeta Opciones.
+- `Vista/Anclas.cs`: registro de objetivos por nombre (`destino`, `boleto:0`, `ruta`, `partir`, `pista`, `ayuda`, `topera`, `palanca`, `dial:partes:+`, `dial:avanza:+`, `frenar`, `lupa`, `tramo:0`, `marca:7`, `compas:punta`, `rueda`, `tarjeta:0`, `vagon:×`, `alternativas`, `pasajero:0`…). Los objetos de la vía se convierten a rectángulo de pantalla.
+- `Resources/guias.json`: todos los pasos y textos de GDD 12.4 a 12.7, editables sin tocar código.
+- `Sesion.modo`: `Curso` o `Solo` (GDD 12.3). "Sin cuadrillas" sale de Opciones.
+- Prueba automática: `-auto` completa las guías haciendo las acciones; nuevo `-auto -solo`; con `-capturas` guarda una captura por paso de guía (`guia_<puzzle>_<paso>.png`).
+
+**Hitos fase 2** (cada uno: compila, tests, commit, tag, build, zip portátil, release `build-<hito>-HHMM`, copia al Escritorio, `AVANCE.md`, `git pull` y lectura de `MENSAJES_CHAT.md`):
+- **F1 · Guía + Zona 0 + dos caminos:** sistema de guía, 0.1 con sus 5 pasos, 0.2 nuevo, menú con "Jugar con el curso" / "Jugar solo" y modo Solo funcionando de punta a punta (controles respondidos por el jugador, Apuesta de 3 s, sin cuadrillas). Build `F1_Guia`.
+- **F2 · Herramientas:** guía de primera vez de cada herramienta (GDD 12.6) y avisos por evento (GDD 12.5). Build `F2_Herramientas`.
+- **F3 · Ayudas:** botón "?" (GDD 12.7), pantalla "Para el profe" (GDD 12.8) con `Imprimibles/Linea0_Hoja_de_cuadrilla.pdf` copiado a `StreamingAssets` y abierto con `Application.OpenURL`, créditos del grupo en el menú, y en Opciones "Guías: Sí/No" y "Volver a mostrar las guías". Build `F3_Ayudas`.
+- **F4 · Revisión:** correr `-auto`, `-auto -solo`, `-auto -fallar` y `-auto -demo` con capturas, sin excepciones, a 1366×768 y 1920×1080. Subir a `docs/capturas/` las capturas de cada paso de guía y una de cada pantalla nueva (máximo 40). Release final.
+
+Si no alcanza el tiempo, el orden de prioridad es F1, F2, F3, F4.
+
+## Contexto (fase 1)
 - KIRO (estudiante de Diseño de Videojuegos, UGM) necesita un **prototipo funcional para presentar mañana**. No es el producto final: el gameloop tiene que funcionar de inicio a fin y verse presentable.
 - Es un serious game de **bajo presupuesto**: primitivas, código simple, nada fuera del GDD.
 - Se juega con **un solo PC y proyector**, con el curso en 4 cuadrillas por turnos (GDD sección 4). Eso es parte central del diseño, no un extra.

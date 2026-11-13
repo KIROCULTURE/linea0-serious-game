@@ -434,3 +434,114 @@ Píldoras de estación: fondo del color del conjunto. Número en blanco sobre az
 
 **Sí:** gameloop completo de inicio a fin con cuadrillas, controles de entrada y salida, las 6 zonas jugables, ritmo adaptativo, reporte final y menú con selección de zona.
 **No:** guardado entre sesiones, cuentas, idiomas, cinemáticas, personajes animados, voces, 3D, tienda, multijugador en red, dispositivos de los alumnos.
+
+---
+
+## 12. Aprender a jugar sin que nadie explique (fase 2, 13 de noviembre)
+
+**Objetivo:** que un profe o un alumno reciba solo el `.exe` y, sin leer nada aparte, entienda en menos de 5 minutos de qué se trata el juego, cómo se mueve el tren y cómo se resuelve cada desafío.
+
+**Problema de la versión actual (build-0801):** el "Cómo jugar" explica la dinámica de la sala (cuadrillas, hoja, puntos), pero no cómo se juega un puzzle. Cada herramienta nueva aparece con una sola frase, y la opción para jugar solo está escondida en Opciones.
+
+### 12.1 Principios
+1. **Se aprende haciendo.** Cada paso de la guía espera la acción real: el jugador toca el boleto de verdad, no una imagen de un boleto.
+2. **Una cosa por paso.** Una línea de texto (máximo 70 caracteres) y un solo objetivo señalado.
+3. **Se muestra una vez.** Cada guía aparece la primera vez que hace falta. Se puede volver a ver con el botón "?".
+4. **Nunca encierra.** Siempre está "Ya sé jugar" para saltarse la guía.
+
+### 12.2 La guía (sistema)
+- **Foco:** la pantalla se oscurece (`#1E2228` al 55 %) salvo un hueco alrededor del objetivo. Ese hueco tiene un marco ámbar (`#F2A900`, 4 px) que late suave.
+- **Mano:** un puntero dibujado con primitivas (blanco con borde oscuro) que toca el objetivo una y otra vez. Para lo que se arrastra (compás, tarjetas), la mano hace el recorrido.
+- **Globo:** tarjeta blanca junto al objetivo con la línea de texto (40 px a 1080p), "Paso 2 de 4" en gris y, solo si el paso no pide una acción, un botón "Seguir".
+- **"Ya sé jugar":** arriba a la derecha, siempre visible durante la guía.
+- **Bloqueo:** mientras dura un paso, solo responde el objetivo. Lo demás no se puede tocar.
+- **Memoria:** cada guía vista se guarda en el PC (`PlayerPrefs`). Es la única excepción a "sin guardado" de la sección 11. En Opciones: "Guías: Sí/No" y "Volver a mostrar las guías".
+- Referencia visual: `docs/mockup_guia.png`.
+
+### 12.3 Entrada al juego: dos caminos
+El menú parte con dos botones grandes:
+- **"Jugar con el curso"** · "Profe con proyector · 4 cuadrillas · 45 min". Es el modo actual: cuadrillas, hoja, controles votados por el curso.
+- **"Jugar solo"** · "A tu ritmo · unos 30 min". Sin cuadrillas, sin marcador por equipos y sin "¿Quién predijo bien?". Los controles de entrada y salida los responde el mismo jugador (el juego registra si acertó). La Apuesta del andén dice "Piensa dónde va a parar" y dura 3 segundos.
+
+Abajo, más chicos: "Para el profe", "Modo demo", "Elegir zona", "Opciones". La opción "Sin cuadrillas" sale de Opciones porque ahora la decide la entrada.
+
+El "Cómo jugar" de 4 láminas queda solo para "Jugar con el curso" (explica la sala). En "Jugar solo" no se muestra: la guía de la Zona 0 enseña directamente.
+
+### 12.4 Zona 0 como tutorial guiado (~2 min)
+**0.1** (ya existe: 0 → 2 con `+2`):
+1. Objetivo: la estación DESTINO · "La pasajera va a la estación 2: la del anillo rojo." · Acción: tocar el destino.
+2. Objetivo: el boleto `+2` · "Los boletos mueven el tren. Toca el +2." · Acción: el boleto entra a la ruta.
+3. Objetivo: Partir · "Ahora parte." · Acción: tocar Partir.
+4. Durante la Apuesta (solo modo curso), objetivo: la cuenta regresiva · "Antes de partir, el curso anota dónde va a parar el tren." · Avanza solo.
+5. Al llegar, objetivo: la cuenta escrita · "Llegaste. Así se escribe lo que hiciste: 0 + 2 = 2." · Botón Seguir.
+
+**0.2 (nuevo):** Boletos · 0 → 5 · mano `+2`, `+3`, `+4`, ruta de 2 · solución `+2` `+3` · sin puntos.
+- Pasajero: "Voy a la estación 5. ¿Me llevas?"
+- Guía, objetivo: las dos casillas de la ruta · "Ahora caben dos boletos. Elige los que juntos lleguen a 5."
+- Al acertar, nombra: "`2 + 3 = 5`. Puedes juntar varios boletos en un viaje."
+- Cálculo verificado: con dos boletos de {+2, +3, +4} solo `+2 +3` llega a 5 (2 + 4 = 6, 3 + 4 = 7).
+
+### 12.5 Avisos de primera vez (por evento)
+Aparecen solos la primera vez que pasa algo, con foco en lo que corresponde y botón Seguir:
+| Evento | Texto |
+|---|---|
+| Primera falla | "El tren quedó donde cayó y te dice cuánto faltó. Reintentar es gratis." |
+| La Pista empieza a parpadear | "¿Atascado? Pide una pista. Hay tres por puzzle." |
+| Primer "¿Quién predijo bien?" (curso) | "Marca las cuadrillas que anotaron bien dónde paró el tren." |
+| Primer control de entrada (curso) | "Voten con los dedos: 1, 2, 3 o 4. El profe marca cuántos acertaron." |
+| Primer control de entrada (solo) | "Elige tu respuesta. La misma pregunta vuelve al final del juego." |
+| Primer Sin vía | "Aquí la vía está tapada. Resuelve con números y después el tren comprueba." |
+| Primera Serpiente (6.4) | "Aquí no hay prioridad: el tren hace cada paso en orden." |
+
+### 12.6 Guía de cada herramienta (primera vez que aparece)
+| Puzzle | Pasos (objetivo · texto · acción) |
+|---|---|
+| 1.1 Contar | primer pasajero · "Toca a cada pasajero para contarlo." · tocar uno |
+| 1.4 Expreso | boleto "3 saltos de 4" · "Este boleto repite el mismo salto: 3 saltos de 4." · ponerlo en la ruta |
+| 1.5 Repartir | primer pasajero · "Toca un pasajero: sube al vagón que sigue." · tocar uno |
+| 2.1 Topera | el muro agrietado (después del choque) · "Toca el muro del cero." · tocarlo |
+| 2.4 Palanca | 1) la palanca · "Activa Restar: el próximo boleto se da vuelta." · activarla. 2) el `−3` · "Pon el −3 y mira cómo gira su flecha." · ponerlo |
+| 2.5 Espejo | boleto `× (−1)` · "El espejo lleva el tren al otro lado del cero." · ponerlo |
+| 3.1 Divisor | 1) ▶ de "Partes del tramo" · "Corta el tramo en 2 partes iguales." · valor 2. 2) ▶ de "Partes que avanza" · "Avanza 1 parte." · valor 1. 3) Frenar · "Frena aquí." · tocar |
+| 3.7 Contar saltos | las alternativas · "Elige cuántos saltos caben. El tren salta y los cuenta." · elegir |
+| 4.1 Lupa | 1) la lupa · "La lupa hace zoom en un tramo." · tocarla. 2) tramo 0–1 · "Toca el tramo entre 0 y 1." · zoom. 3) marca 7 · "Cada marca es una décima. Toca la 7." · tocarla. 4) Frenar |
+| 5.1 Compás | punta de la diagonal (gesto arrastrar) · "Arrastra la punta de la diagonal hasta la vía." · diagonal acostada |
+| 5.2 Rueda | "Rodar una vuelta" · "Haz rodar la rueda una vuelta completa." · tocar |
+| 5.3 Clasificar | primera tarjeta (gesto arrastrar a su línea) · "Lleva cada número a la línea más chica donde cabe." · una tarjeta ubicada |
+| 6.1 Jerarquía | el vagón `×` · "Los expresos (× y :) parten primero. Toca el ×." · tocarlo |
+
+### 12.7 Botón "?" (siempre visible, junto a Pista)
+Abre una tarjeta con:
+- **Lo que hay que lograr:** la frase del pasajero y el destino.
+- **Cómo se usa:** una o dos líneas según el tipo de puzzle:
+  | Tipo | Texto |
+  |---|---|
+  | Boletos | "Pon boletos en la ruta y presiona Partir. Cada boleto mueve el tren." |
+  | Contar | "Toca a cada pasajero. El número que aparece es cuántos van." |
+  | Repartir | "Toca los pasajeros: suben por turno a cada vagón." |
+  | Divisor | "Elige en cuántas partes iguales se corta el tramo y cuántas avanza el tren. Después frena." |
+  | Lupa | "Toca la lupa y un tramo para hacer zoom. Cada zoom agrega una cifra después de la coma." |
+  | ContarSaltos | "Elige cuántos saltos del tamaño indicado caben en el tramo." |
+  | SinVia | "Resuelve la cuenta y elige la alternativa. Después el tren comprueba." |
+  | Compas | "Arrastra la punta de la diagonal hasta acostarla sobre la vía." |
+  | Rueda | "Haz rodar la rueda una vuelta y frena donde quedó el punto rojo." |
+  | Clasificar | "Arrastra cada número a la línea más chica que lo contiene." |
+  | Jerarquia | "Toca los vagones en el orden en que parten: ( ), después × :, después + −." |
+  | Serpiente | "Predice dónde termina. El tren hace cada paso en orden." |
+- Botón **"Ver cómo se hace"**: repite la guía de esa herramienta (12.6).
+- No cuenta como pista ni quita puntos.
+
+### 12.8 Pantalla "Para el profe" (desde el menú)
+Una sola pantalla, sin scroll:
+- **Qué enseña:** números naturales, enteros, fracciones, decimales, una primera mirada a los reales y operaciones combinadas. Matemática 1° medio, Unidad 1, OA 1.
+- **Cuánto dura:** unos 30 minutos de juego en un bloque de 45.
+- **Cómo se juega en sala:** un PC con proyector y el curso en 4 cuadrillas que se turnan. La de turno decide el viaje y las otras anotan en su hoja dónde va a parar el tren.
+- **Qué mide:** las mismas 6 preguntas al inicio y al final, más el reporte por zona.
+- **Si algo se traba:** "Saltar" (arriba a la derecha) pasa al siguiente puzzle y "?" explica el actual.
+- Botón **"Abrir la hoja para imprimir"**: abre `Linea0_Hoja_de_cuadrilla.pdf`, incluido en la build.
+- Pie: "Grupo BulletHelp: Darío Valdebenito, Bastián Allende y Alejandro Gómez".
+
+### 12.9 Cómo sabremos que funciona
+- **Prueba de los 5 minutos:** una persona que nunca vio el juego, solo con el `.exe`, completa la Zona 0 y la Zona 1 sin preguntar nada. Se prueba con alguien de verdad antes de entregar.
+- Cada herramienta nueva tiene su guía la primera vez.
+- Ningún texto de guía pasa de 70 caracteres ni de una línea a 1080p.
