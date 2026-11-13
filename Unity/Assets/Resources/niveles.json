@@ -50,7 +50,7 @@
       "casillas": 1, "rangoVia": ["0", "12"], "solucion": [0],
       "hablante": "Central", "frasePedido": "El expreso no para en todas: salta de 4 en 4.",
       "fraseNombre": "3 × 4 = 12. <b>Multiplicar</b> es repetir el mismo salto.", "cuentaEscrita": "3 × 4 = 12",
-      "pistas": ["El destino está lejos: 12 estaciones.", "Un expreso repite el mismo salto. ¿Cuál llega a 12?", "Solución: 3 saltos de 4."] },
+      "pistas": ["El destino está 12 estaciones más allá.", "Un expreso repite el mismo salto. ¿Cuál llega a 12?", "Solución: 3 saltos de 4."] },
 
     { "id": "1.5", "zona": 1, "tipo": "Repartir", "esencial": true, "cantidad": 12, "vagones": 3,
       "alternativas": ["3", "4", "9", "15"], "correcta": 1,
@@ -197,7 +197,7 @@
       "inicio": "0", "meta": "1/4", "rangoVia": ["0", "2"],
       "hablante": "Pasajero", "frasePedido": "Compré 1/4 de kilo de pan. ¿Cuánto marca la pesa?",
       "fraseNombre": "1/4 = 0,25. Fracción y decimal: dos nombres del mismo lugar.", "cuentaEscrita": "1/4 = 0,25",
-      "pistas": ["1/4 es menos que la mitad del tramo.", "1/4 = 25/100: necesitas dos zooms.", "Solución: zoom, marca 2, zoom, marca 5."] },
+      "pistas": ["1/4 es menos que la mitad del tramo.", "1/4 = 25/100, así que necesitas dos zooms.", "Solución: zoom, marca 2, zoom, marca 5."] },
 
     { "id": "4.5", "zona": 4, "tipo": "Lupa", "esencial": true, "guion": "periodico", "letreroMeta": "1/3",
       "inicio": "0", "meta": "1/3", "rangoVia": ["0", "2"], "partesSolucion": 3, "avanceSolucion": 1,

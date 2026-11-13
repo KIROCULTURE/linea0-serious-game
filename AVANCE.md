@@ -17,6 +17,26 @@ Releases anteriores, por si algo falla:
 - build-0730: sin los arrastres.
 - build-0720: la versión segura, sin "Cómo jugar".
 
+## Fase 2 · F0 Arreglos visuales (13 de noviembre)
+
+Revisé las 100 capturas de `-auto` a 1366×768 y 1920×1080, y probé además 1280×720 y 1024×768 en ventana. Cada arreglo se hizo en el origen (pivotes, anclas, tamaño del texto). Las capturas de antes y después están en `docs/capturas/antes_despues/` (`<arreglo>_antes.png` / `_despues.png`).
+
+| # | Defecto | Causa | Arreglo |
+|---|---|---|---|
+| 1 | La forma (▲ ● ■ ◆) se montaba sobre la letra y el ◆ quedaba más arriba (marcador y alternativas) | La forma usaba como pivote su borde izquierdo, y el rombo giraba en torno a ese borde | Pivote al centro. En la píldora van la forma y la letra a la izquierda, y el número a la derecha |
+| 2 | "DE TURNO" pegado al borde de la barra | Píldoras muy bajas | Píldoras más arriba y más bajas (58 px), con la etiqueta debajo y aire hasta el borde |
+| 3 | Reloj y "SALIDA" cortados en ventana | La ventana podía quedar más grande que el monitor (al pasar a ventana con Alt+Enter u Opciones) | La ventana se ajusta al 80 % del monitor. SALIDA y DESTINO no se salen del borde de la vía |
+| 4 | "−6 °C" partido en dos líneas y fuera de la píldora | La píldora tenía ancho fijo y el texto saltaba de línea | La píldora toma el ancho de su texto, que no salta de línea; si no cabe, se achica la letra. El anillo de DESTINO sigue a la píldora |
+| 5 | Estaciones cortadas abajo | Con la ventana más grande que el monitor, la parte de abajo quedaba fuera de pantalla (mismo caso del 3) | Igual que el 3. A 1024×768, 1280×720 y 1366×768 se ve la fila completa |
+| 6 | Punta de flecha chueca o despegada | Dos barras giradas según la cuerda del final del arco | Un triángulo con la punta en el final exacto del arco, girado según la tangente |
+| 7 | Boletos apagados ilegibles | Se bajaba la opacidad de todo el boleto | `UI.Atenuar`: fondo gris y texto oscuro, a opacidad completa. Se usa en boletos, alternativas descartadas, vagones que todavía no pueden partir y control de salida |
+| 8 | Marcas de la lupa cortadas abajo | Iban 150 px bajo la vía | Van en la fila de las estaciones, y los enteros conservan su píldora |
+| 9 | "nota" encimado con SALIDA (4.3) | Etiqueta suelta bajo la píldora | El letrero dice "nota 5,0" dentro de la píldora, como pide el GDD |
+| 10 | Rueda (5.2) cortada en el borde izquierdo | El margen de la vía era menor que el radio de la rueda | La vía parte en −0,6 en ese puzzle |
+| 11 | Repartir: pasajeros encima de la topera y botón sobre la vía | | El andén oculta la topera y el botón queda bajo la vía |
+
+Textos: con el skill de edición corregí tres frases de pantalla con dos puntos de más ("El destino está 12 estaciones más allá.", "1/4 = 25/100, así que necesitas dos zooms.", "Otra persona toma el mouse para la Zona 3."). Los textos del GDD no se tocaron.
+
 ## 1. Builds
 | Hito | Qué se ve al jugarla | Duración | ¿Sirve para presentar? |
 |---|---|---|---|

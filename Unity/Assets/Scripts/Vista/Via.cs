@@ -225,7 +225,7 @@ namespace Linea0.Vista
         {
             string n = UI.M(k.ToString());
             if (estilo == "grados") return n + " °C";
-            if (estilo == "nota") return n + ",0";
+            if (estilo == "nota") return "nota " + n + ",0";
             return n;
         }
 
@@ -235,7 +235,7 @@ namespace Linea0.Vista
             long a = (long)Math.Ceiling(min), b = (long)Math.Floor(max);
             float px = PxPorUnidad;
             long paso = px >= 120 ? 1 : px >= 60 ? 2 : px >= 26 ? 5 : 10;
-            float ancho = estilo == "grados" ? 140 : estilo == "nota" ? 120 : 104;
+            float ancho = 104;
             if (paso == 1 && px < ancho + 8) ancho = Mathf.Max(70, px - 10);
             for (long k = a; k <= b; k++)
             {
@@ -246,20 +246,23 @@ namespace Linea0.Vista
                 Rect(capaVia, "Estacion", Paleta.Via, x, YVia + 4, 7, 34);
                 if (!conNumero || x < ancho / 2 || x > Ancho - ancho / 2) continue; // no dibujar píldoras cortadas en el borde
                 bool esDestino = destino.HasValue && destino.Value.EsRacional && destino.Value.Valor == new Racional(k);
-                if (esDestino)
-                {
-                    if (destinoIluminado) Rect(capaVia, "Brillo", Paleta.Sol, x, YVia - 64, ancho + 60, 104, UI.Pildora);
-                    Rect(capaVia, "Anillo", Paleta.Error, x, YVia - 64, ancho + 22, 84, UI.Pildora);
-                    Rect(capaVia, "AnilloIn", Color.white, x, YVia - 64, ancho + 10, 72, UI.Pildora);
-                }
                 var col = ColorEstacion(k);
+                // la píldora se adapta al texto (nunca parte línea); si no cabe entre estaciones, se achica la letra
+                float maxW = Mathf.Max(60, paso * px - 10);
                 var p = Rect(capaVia, "Pildora " + k, col, x, YVia - 64, ancho, 62, UI.Pildora);
                 var t = UI.Texto(p, TextoEstacion(k), 44, Paleta.TextoSobre(col));
-                UI.Llenar(t.rectTransform, 6, 6, 2, 2);
-                if (estilo == "nota")
+                t.resizeTextForBestFit = false;
+                t.horizontalOverflow = HorizontalWrapMode.Overflow;
+                float pref = t.preferredWidth + 28;
+                if (pref > maxW) { t.fontSize = Mathf.Max(18, (int)(44 * (maxW - 28) / (pref - 28))); pref = maxW; }
+                float w = Mathf.Max(ancho, pref);
+                p.sizeDelta = new Vector2(w, 62);
+                UI.Llenar(t.rectTransform);
+                if (esDestino)
                 {
-                    var n = UI.Texto(capaVia, "nota", 26, Paleta.Gris);
-                    UI.Ubicar(n.rectTransform, Vector2.zero, new Vector2(x, YVia - 112), new Vector2(120, 30));
+                    if (destinoIluminado) Rect(capaVia, "Brillo", Paleta.Sol, x, YVia - 64, w + 60, 104, UI.Pildora).SetSiblingIndex(p.GetSiblingIndex());
+                    Rect(capaVia, "Anillo", Paleta.Error, x, YVia - 64, w + 22, 84, UI.Pildora).SetSiblingIndex(p.GetSiblingIndex());
+                    Rect(capaVia, "AnilloIn", Color.white, x, YVia - 64, w + 10, 72, UI.Pildora).SetSiblingIndex(p.GetSiblingIndex());
                 }
             }
             if (salida.HasValue) Etiqueta("SALIDA", salida.Value.ToDouble(), Paleta.Via);
@@ -269,7 +272,7 @@ namespace Linea0.Vista
         void Etiqueta(string s, double v, Color c)
         {
             var t = UI.Texto(capaMarcas, s, 28, c);
-            UI.Ubicar(t.rectTransform, Vector2.zero, new Vector2(X(v), YVia - 134), new Vector2(200, 34));
+            UI.Ubicar(t.rectTransform, Vector2.zero, new Vector2(Mathf.Clamp(X(v), 100, Ancho - 100), YVia - 134), new Vector2(200, 34));
         }
 
         void DibujarDestino()
@@ -291,7 +294,7 @@ namespace Linea0.Vista
                 }
             }
             var e = UI.Texto(capaMarcas, "DESTINO", 30, Paleta.Error);
-            UI.Ubicar(e.rectTransform, Vector2.zero, new Vector2(X(v), YVia - 126), new Vector2(220, 36));
+            UI.Ubicar(e.rectTransform, Vector2.zero, new Vector2(Mathf.Clamp(X(v), 110, Ancho - 110), YVia - 126), new Vector2(220, 36));
         }
 
         void DibujarMarcas()
@@ -335,7 +338,7 @@ namespace Linea0.Vista
             float h = Mathf.Clamp(dist * 0.35f, 50, Mathf.Max(60, Alto - y0 - 60));
             int n = Mathf.Max(4, Mathf.RoundToInt(dist / 22));
             Vector2 Punto(float t) => new Vector2(Mathf.Lerp(xa, xb, t), y0 + 4 * h * t * (1 - t));
-            for (int i = 0; i <= n; i++)
+            for (int i = 0; i < n; i++)
             {
                 var p = Punto(i / (float)n);
                 var img = UI.Caja(arco.raiz, "p", color, UI.Circulo);
@@ -343,17 +346,14 @@ namespace Linea0.Vista
                 UI.Ubicar(img.rectTransform, Vector2.zero, p, new Vector2(11, 11));
                 arco.puntos.Add(img);
             }
-            // punta de flecha con dos barras
-            var fin = Punto(1); var antes = Punto(0.94f);
-            float ang = Mathf.Atan2(fin.y - antes.y, fin.x - antes.x) * Mathf.Rad2Deg;
-            foreach (float s in new[] { 150f, -150f })
-            {
-                var bar = UI.Caja(arco.raiz, "flecha", color);
-                bar.raycastTarget = false;
-                UI.Ubicar(bar.rectTransform, Vector2.zero, fin, new Vector2(34, 8), new Vector2(0, 0.5f));
-                bar.rectTransform.localRotation = Quaternion.Euler(0, 0, ang + s);
-                arco.puntos.Add(bar);
-            }
+            // punta de flecha: triángulo con la punta en el final del arco, girado según la tangente (dy/dt = −4h en t = 1)
+            var fin = Punto(1);
+            float ang = Mathf.Atan2(-4 * h, xb - xa) * Mathf.Rad2Deg;
+            var punta = UI.Caja(arco.raiz, "flecha", color, UI.Triangulo);
+            punta.raycastTarget = false;
+            UI.Ubicar(punta.rectTransform, Vector2.zero, fin, new Vector2(30, 34), new Vector2(0.5f, 1f));
+            punta.rectTransform.localRotation = Quaternion.Euler(0, 0, ang - 90);
+            arco.puntos.Add(punta);
             if (!string.IsNullOrEmpty(texto))
             {
                 var cima = Punto(0.5f);

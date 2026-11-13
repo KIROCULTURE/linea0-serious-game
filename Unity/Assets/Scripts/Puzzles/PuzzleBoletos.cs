@@ -45,7 +45,7 @@ namespace Linea0.Puzzles
                 if (G.auto) AutoRuta();
                 yield return sPartir.Esperar();
                 partir.Activo = false;
-                foreach (var b in mano) b.Activo = false;
+                for (int i = 0; i < mano.Count; i++) { mano[i].Activo = false; UI.Atenuar(mano[i], ColorBoleto(P.mano[i], Dec), true); }
                 if (palanca != null) palanca.Activo = false;
 
                 if (choque)
@@ -240,7 +240,7 @@ namespace Linea0.Puzzles
             for (int i = 0; i < mano.Count; i++)
             {
                 bool usado = ruta.Contains(i);
-                mano[i].fondo.color = Paleta.ConAlfa(ColorBoleto(P.mano[i], Dec), usado ? 0.25f : 1f);
+                UI.Atenuar(mano[i], ColorBoleto(P.mano[i], Dec), usado);
             }
             foreach (var c in casillas) for (int j = c.childCount - 1; j >= 1; j--) Object.Destroy(c.GetChild(j).gameObject);
             for (int k = 0; k < ruta.Count; k++)

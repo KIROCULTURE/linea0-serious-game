@@ -237,7 +237,7 @@ namespace Linea0.Puzzles
                 if (j < 10 && lupaActiva && nivel < 3) { var vv = v; Tramo(capa, v.ToDouble(), (v + paso).ToDouble(), () => Lanzar(Zoom(vv))); }
                 var img = UI.Caja(capa, "Tic", Paleta.Decimales); img.raycastTarget = false;
                 UI.Ubicar(img.rectTransform, Vector2.zero, new Vector2(V.X(v.ToDouble()), Via.YVia + 20), new Vector2(8, 52));
-                MarcaBoton(capa, v, UI.M(v.ToDecimal(3)), true);
+                if (!v.EsEntero) MarcaBoton(capa, v, UI.M(v.ToDecimal(3)), true); // los enteros ya tienen su píldora
             }
         }
 
@@ -254,7 +254,7 @@ namespace Linea0.Puzzles
             if (v.ToDouble() < V.min || v.ToDouble() > V.max) return;
             bool sel = elegido.HasValue && elegido.Value == v;
             var b = UI.CrearBoton(capa, texto, chica ? 30 : 40, sel ? Paleta.Enteros : (chica ? Paleta.Decimales : Paleta.Naturales), () => { elegido = v; Refrescar(); });
-            UI.Ubicar(b.rt, Vector2.zero, new Vector2(V.X(v.ToDouble()), Via.YVia - (chica ? 150 : 64)), chica ? new Vector2(Mathf.Min(140, V.PxPorUnidad * (float)Paso(nivel).ToDouble() - 6), 54) : new Vector2(104, 62));
+            UI.Ubicar(b.rt, Vector2.zero, new Vector2(V.X(v.ToDouble()), Via.YVia - 64), chica ? new Vector2(Mathf.Min(140, V.PxPorUnidad * (float)Paso(nivel).ToDouble() - 6), 54) : new Vector2(104, 62));
         }
     }
 

@@ -25,27 +25,34 @@ namespace Linea0.Sala
                 if (turno)
                 {
                     var b = UI.Caja(p.marcadorRT, "Turno", Paleta.Texto, UI.Pildora);
-                    UI.Ubicar(b.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(x, 6), new Vector2(172, 78));
+                    UI.Ubicar(b.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(x, 16), new Vector2(172, 70));
                     var dt = UI.Texto(p.marcadorRT, "DE TURNO", 20, Paleta.Texto);
-                    UI.Ubicar(dt.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(x, -44), new Vector2(160, 24));
+                    UI.Ubicar(dt.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(x, -32), new Vector2(160, 22));
                 }
-                Pildora(p.marcadorRT, i, s.puntos[i].ToString(), new Vector2(x, 6), new Vector2(160, 66));
+                Pildora(p.marcadorRT, i, s.puntos[i].ToString(), new Vector2(x, 16), new Vector2(160, 58));
                 x += 176;
             }
         }
 
-        /// <summary>Píldora de cuadrilla: color + forma + letra (+ texto).</summary>
+        /// <summary>Píldora de cuadrilla: forma y letra a la izquierda, el número (o texto) a la derecha.</summary>
         public static RectTransform Pildora(Transform padre, int i, string extra, Vector2 pos, Vector2 tam, int tamTexto = 38)
         {
             var c = Paleta.Cuadrillas[i];
+            var tc = Paleta.TextoSobre(c);
             var img = UI.Caja(padre, "Cuadrilla " + Paleta.Letras[i], c, UI.Pildora);
             UI.Ubicar(img.rectTransform, new Vector2(0.5f, 0.5f), pos, tam);
-            var f = UI.Forma(img.transform, i, Paleta.TextoSobre(c), tam.y * 0.45f);
-            UI.Ubicar(f.rectTransform, new Vector2(0, 0.5f), new Vector2(tam.y * 0.55f, 0), f.rectTransform.sizeDelta);
-            var t = UI.Texto(img.transform, Paleta.Letras[i] + (string.IsNullOrEmpty(extra) ? "" : " " + extra), tamTexto, Paleta.TextoSobre(c));
-            t.horizontalOverflow = HorizontalWrapMode.Overflow;
-            t.alignment = TextAnchor.MiddleLeft;
-            UI.Llenar(t.rectTransform, tam.y * 0.95f, 8, 2, 2);
+            float h = tam.y;
+            var f = UI.Forma(img.transform, i, tc, h * 0.42f);
+            UI.Ubicar(f.rectTransform, new Vector2(0, 0.5f), new Vector2(h * 0.55f, 0), f.rectTransform.sizeDelta, new Vector2(0.5f, 0.5f));
+            var letra = UI.Texto(img.transform, Paleta.Letras[i], tamTexto, tc, TextAnchor.MiddleLeft);
+            letra.horizontalOverflow = HorizontalWrapMode.Overflow;
+            UI.Llenar(letra.rectTransform, h * 0.98f, 8, 2, 2);
+            if (!string.IsNullOrEmpty(extra))
+            {
+                var num = UI.Texto(img.transform, extra, tamTexto, tc, TextAnchor.MiddleRight);
+                num.horizontalOverflow = HorizontalWrapMode.Overflow;
+                UI.Llenar(num.rectTransform, h * 1.5f, h * 0.42f, 2, 2);
+            }
             return img.rectTransform;
         }
     }
@@ -108,7 +115,7 @@ namespace Linea0.Sala
                 var pil = Marcador.Pildora(b.rt, i, deTurno ? "turno" : "", Vector2.zero, new Vector2(210, 90), 36);
                 var chk = UI.Texto(b.rt, "", 60, Paleta.Racionales);
                 UI.Ubicar(chk.rectTransform, new Vector2(1, 1), new Vector2(-10, 0), new Vector2(60, 60));
-                if (deTurno) { b.Activo = false; pil.GetComponent<Image>().color = Paleta.ConAlfa(Paleta.Cuadrillas[i], 0.35f); }
+                if (deTurno) { b.Activo = false; pil.GetComponent<Image>().color = Color.Lerp(Paleta.Cuadrillas[i], Paleta.Borde, 0.75f); }
                 b.button.onClick.AddListener(() =>
                 {
                     marcadas[k] = !marcadas[k];
@@ -140,7 +147,7 @@ namespace Linea0.Sala
             var caja = v.GetChild(1);
             var t = UI.Texto(caja, "Cambio de maquinista", 72, Paleta.Texto);
             UI.Ubicar(t.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -90), new Vector2(1200, 100));
-            var d = UI.Texto(caja, "Otra persona toma el mouse. Sigue: " + siguiente + ".", 44, Paleta.Via, TextAnchor.MiddleCenter, false);
+            var d = UI.Texto(caja, "Otra persona toma el mouse para la " + siguiente + ".", 44, Paleta.Via, TextAnchor.MiddleCenter, false);
             UI.Ubicar(d.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0, 10), new Vector2(1200, 80));
             var s = new Senal();
             var b = UI.CrearBoton(caja, "Listo", 52, Paleta.Texto, () => s.Dar());
@@ -180,7 +187,7 @@ namespace Linea0.Sala
                 if (salida)
                 {
                     for (int i = 0; i < botones.Count; i++)
-                        if (i != pr.correcta) botones[i].fondo.color = Paleta.ConAlfa(botones[i].fondo.color, 0.25f);
+                        UI.Atenuar(botones[i], Paleta.Cuadrillas[i], i != pr.correcta);
                     var ok = UI.Texto(cuerpo, "Respuesta: " + pr.alternativas[pr.correcta], 50, Paleta.Racionales);
                     UI.Ubicar(ok.rectTransform, new Vector2(0.5f, 0), new Vector2(0, 290), new Vector2(1200, 70));
                 }
@@ -216,7 +223,7 @@ namespace Linea0.Sala
                 UI.Ubicar(b.rt, ancla, centro + new Vector2((i - (alts.Length - 1) / 2f) * sep, 0), new Vector2(ancho, alto));
                 UI.Llenar(b.texto.rectTransform, alto * 0.75f, 16, 4, 4);
                 var f = UI.Forma(b.rt, i, Paleta.TextoSobre(c), alto * 0.42f);
-                UI.Ubicar(f.rectTransform, new Vector2(0, 0.5f), new Vector2(alto * 0.45f, 0), f.rectTransform.sizeDelta);
+                UI.Ubicar(f.rectTransform, new Vector2(0, 0.5f), new Vector2(alto * 0.45f, 0), f.rectTransform.sizeDelta, new Vector2(0.5f, 0.5f));
                 if (alElegir == null) b.button.transition = Selectable.Transition.None;
                 lista.Add(b);
             }

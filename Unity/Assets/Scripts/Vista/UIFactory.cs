@@ -257,6 +257,16 @@ namespace Linea0.Vista
             return new Boton { button = b, fondo = f, texto = t };
         }
 
+        /// <summary>Apaga un botón con un tono gris y texto oscuro legible, sin bajar la opacidad; encendido queda en su color.</summary>
+        public static void Atenuar(Boton b, Color colorBase, bool apagado)
+        {
+            b.fondo.color = apagado ? Color.Lerp(colorBase, Paleta.Borde, 0.75f) : colorBase;
+            if (b.texto != null) b.texto.color = apagado ? Paleta.Via : Paleta.TextoSobre(colorBase);
+            var c = b.button.colors;
+            c.disabledColor = Color.white; // el color ya lo decide Atenuar; sin tinte encima
+            b.button.colors = c;
+        }
+
         public static void Limpiar(Transform t)
         {
             for (int i = t.childCount - 1; i >= 0; i--) UnityEngine.Object.Destroy(t.GetChild(i).gameObject);

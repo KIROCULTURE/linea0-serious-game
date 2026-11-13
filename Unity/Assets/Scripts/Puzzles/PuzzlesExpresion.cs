@@ -49,7 +49,7 @@ namespace Linea0.Puzzles
                     b.fondo.sprite = UI.Cuadrado; b.fondo.type = Image.Type.Simple;
                     UI.Ubicar(b.rt, new Vector2(0.5f, 1), pos, new Vector2(w, 100));
                     b.Activo = alClic == null || clic;
-                    if (alClic != null && !clic) b.fondo.color = Paleta.ConAlfa(col, 0.35f);
+                    if (alClic != null && !clic) UI.Atenuar(b, col, true);
                 }
                 else
                 {

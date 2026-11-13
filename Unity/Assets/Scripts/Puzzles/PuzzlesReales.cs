@@ -15,6 +15,7 @@ namespace Linea0.Puzzles
         public override IEnumerator Jugar()
         {
             PrepararVia(false);
+            V.Rango(-0.6, P.RangoMax.ToDouble()); // que la rueda no quede cortada en el borde
             V.salida = Racional.Cero; V.Redibujar();
             Pedido();
             T.gameObject.SetActive(false);

@@ -194,14 +194,15 @@ namespace Linea0.Puzzles
         {
             s.Reset();
             botones = Alternativas.Crear(Pa.panel, P.alternativas, k => { if (!descartadas.Contains(k)) s.Dar(k); }, new Vector2(0.5f, 0.5f), centro, 390, 130);
-            foreach (int d in descartadas) botones[d].fondo.color = Paleta.ConAlfa(botones[d].fondo.color, 0.25f);
+            foreach (int d in descartadas) UI.Atenuar(botones[d], Paleta.Cuadrillas[d], true);
             G.Captura(P.id + "_elegir");
             if (G.auto) s.Dar(AutoFalla ? (P.correcta + 1) % 4 : P.correcta);
             yield return s.Esperar();
             for (int i = 0; i < botones.Count; i++)
             {
                 botones[i].Activo = false;
-                if (i == s.valor) { botones[i].rt.localScale = Vector3.one * 1.06f; botones[i].Activo = true; botones[i].button.interactable = false; botones[i].fondo.color = Paleta.Cuadrillas[i]; }
+                UI.Atenuar(botones[i], Paleta.Cuadrillas[i], i != s.valor);
+                if (i == s.valor) botones[i].rt.localScale = Vector3.one * 1.06f;
             }
         }
 

@@ -64,8 +64,22 @@ namespace Linea0.Juego
             else StartCoroutine(Menu());
         }
 
+        bool eraCompleta = true;
+
+        /// <summary>Una ventana más grande que la pantalla corta el reloj y la vía: se achica al 80 % del monitor.</summary>
+        void AjustarVentana()
+        {
+            if (Screen.fullScreen || dirCapturas != null) return; // las pruebas eligen su tamaño
+            int dw = Display.main.systemWidth, dh = Display.main.systemHeight;
+            if (Screen.width <= dw * 0.92f && Screen.height <= dh * 0.85f) return;
+            int h = (int)(dh * 0.8f), w = h * 16 / 9;
+            if (w > dw * 0.92f) { w = (int)(dw * 0.92f); h = w * 9 / 16; }
+            Screen.SetResolution(w, h, FullScreenMode.Windowed);
+        }
+
         void Update()
         {
+            if (Screen.fullScreen != eraCompleta) { eraCompleta = Screen.fullScreen; AjustarVentana(); }
             // la pista parpadea tras 2 fallas
             if (P != null && P.pista != null)
             {
@@ -235,7 +249,7 @@ namespace Linea0.Juego
             var raiz = PantallaCompleta("Cuadrillas");
             var t = UI.Texto(raiz, "Armen 4 cuadrillas", 80, Paleta.Texto);
             UI.Ubicar(t.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -110), new Vector2(1400, 110));
-            var d = UI.Texto(raiz, "Clic en una cuadrilla para sacarla o ponerla. Cada zona cambia el maquinista.", 38, Paleta.Via, TextAnchor.MiddleCenter, false);
+            var d = UI.Texto(raiz, "Haz clic en una cuadrilla para sacarla o ponerla. En cada zona cambia el maquinista.", 38, Paleta.Via, TextAnchor.MiddleCenter, false);
             UI.Ubicar(d.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -210), new Vector2(1600, 60));
             var botones = new List<UI.Boton>();
             for (int i = 0; i < 4; i++)

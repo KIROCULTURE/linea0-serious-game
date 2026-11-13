@@ -69,6 +69,7 @@ namespace Linea0.Puzzles
     {
         public static IEnumerator Animar(GameManager g, RectTransform capa, int cantidad, int vagones, bool porClic, Senal hecho)
         {
+            g.P.via.topera = false; g.P.via.Redibujar(); // el andén ocupa el lugar de la topera
             var raiz = UI.Llenar(UI.Nodo(capa, "Repartir"));
             float ancho = 300, sep = 40, total = vagones * ancho + (vagones - 1) * sep;
             var conteo = new List<Text>();
@@ -99,7 +100,7 @@ namespace Linea0.Puzzles
             if (porClic)
             {
                 var b = UI.CrearBoton(raiz, "Mandar pasajero", 44, Paleta.Naturales, () => clic.Dar());
-                UI.Ubicar(b.rt, new Vector2(0, 0), new Vector2(230, Via.YVia - 60), new Vector2(420, 96));
+                UI.Ubicar(b.rt, new Vector2(0, 0), new Vector2(230, Via.YVia - 80), new Vector2(420, 96));
                 boton = b.button;
             }
             while (mandados < repartibles)
