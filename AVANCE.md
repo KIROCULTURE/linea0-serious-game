@@ -1,21 +1,24 @@
 # AVANCE — Línea 0
 
-## Último release bueno: build-0801
+## Último release bueno: build-F4_Revision-0913
 
-`Escritorio\Linea0_Presentacion_0801.zip`, también en GitHub como release [build-0801](https://github.com/KIROCULTURE/linea0-serious-game/releases/tag/build-0801). Trae `Juego/` (la build completa), `COMO_ABRIR.txt`, `PARA_PRESENTAR.md`, el GDD y el mockup. Se descomprime y se abre `Juego/Linea0.exe`.
+`Escritorio\Linea0_F4_Revision_0913.zip`, también en GitHub como release [build-F4_Revision-0913](https://github.com/KIROCULTURE/linea0-serious-game/releases/tag/build-F4_Revision-0913). Trae `Juego/` (la build completa), `COMO_ABRIR.txt`, `PARA_PRESENTAR.md`, el GDD y el mockup. Se descomprime y se abre `Juego/Linea0.exe`.
 
-Lo que trae:
-- El loop completo con todos los puzzles del GDD, esenciales y de refuerzo, y el ritmo adaptativo.
-- Modo demo, Sin cuadrillas y "Cómo jugar" (4 pantallas).
-- 5.1: la diagonal del compás se arrastra.
-- 5.3: las tarjetas se arrastran al plano.
+Lo que trae (fase 2, hasta F3):
+- Guía paso a paso con la mano de Kenney (CC0).
+- Zona 0 guiada con 0.1 y 0.2.
+- Menú con "Jugar con el curso" y "Jugar solo", y modo Solo.
+- Guía de cada herramienta y avisos de primera vez.
+- Botón "?" con "Ver cómo se hace" y pantalla "Para el profe".
+- Arreglos visuales de F0.
+- Todo lo de la fase 1 (build-0801).
 
-Pasa los 52 tests y las pruebas automáticas (respuestas correctas, fallas, Saltar y Modo demo) sin excepciones, a 1366×768 y 1920×1080. No tiene sonido.
+Pasa los 54 tests y la prueba automática sin excepciones. Las pruebas de F4 a 1366×768 y 1920×1080 en los 4 modos estaban corriendo al publicar este release. No tiene sonido.
 
 Releases anteriores, por si algo falla:
-- build-0751: sin el arrastre de tarjetas.
-- build-0730: sin los arrastres.
-- build-0720: la versión segura, sin "Cómo jugar".
+- build-F3_Ayudas-0859: igual, con la mano dibujada con primitivas.
+- build-0801: la fase 1 completa, sin guía.
+- build-0720: la versión segura de la fase 1.
 
 ## Fase 2 · F0 Arreglos visuales (13 de noviembre)
 
